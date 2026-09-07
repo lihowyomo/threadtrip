@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-  <title>童話旅人手記 🍊 社群繪本版</title>
+  <title>童話漫遊繪本 🍊 一鍵智慧生成版</title>
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
   <meta name="theme-color" content="#FF7E36" />
@@ -20,6 +20,8 @@
       --ink-muted: #7D6F69;
       --naver-green: #03C75A;
       --naver-bg: #E8F8EE;
+      --google-blue: #4285F4;
+      --google-bg: #EEF4FD;
       --app-bg-1: #FFF4E5;
       --app-bg-2: #F5E5D3;
     }
@@ -57,7 +59,7 @@
       z-index: 1;
     }
 
-    /* 頂部導航 */
+    /* 頂部導航列 */
     header {
       width: 100%;
       max-width: 440px;
@@ -70,7 +72,7 @@
 
     .nav-tabs {
       display: flex;
-      background: rgba(255, 255, 255, 0.75);
+      background: rgba(255, 255, 255, 0.7);
       padding: 4px;
       border-radius: 20px;
       border: 1px solid var(--border-color);
@@ -91,6 +93,26 @@
       color: #fff;
     }
 
+    .action-icons {
+      display: flex;
+      gap: 6px;
+    }
+
+    .icon-btn {
+      background: #fff;
+      border: 1px solid var(--border-color);
+      border-radius: 50%;
+      width: 34px;
+      height: 34px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.9rem;
+      cursor: pointer;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+    }
+
+    /* 視圖切換容器 */
     .view-container {
       flex: 1;
       width: 100%;
@@ -115,7 +137,7 @@
       justify-content: center;
     }
 
-    /* 繪本樣式 */
+    /* 1. 繪本視圖樣式 */
     .storybook-wrapper {
       position: relative;
       width: min(92vw, 420px);
@@ -166,6 +188,7 @@
     }
     .page-scroll::-webkit-scrollbar { display: none; }
 
+    /* 封面特別樣式 */
     .cover-page {
       background: linear-gradient(150deg, var(--primary) 0%, var(--primary-deep) 100%);
       color: #FFFFFF;
@@ -174,8 +197,34 @@
       flex-direction: column;
       justify-content: space-between;
       text-align: center;
-      padding: 30px 20px;
+      padding: 26px 18px;
       border-radius: 24px;
+    }
+
+    .cover-illu {
+      font-size: 3.8rem;
+      cursor: pointer;
+      display: inline-block;
+      margin: 6px 0;
+    }
+
+    .cover-title {
+      font-size: 1.7rem;
+      font-weight: 900;
+      text-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+    }
+
+    .trip-summary-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 20px;
+      padding: 4px 12px;
+      font-size: 0.75rem;
+      font-weight: 800;
+      margin-top: 6px;
     }
 
     .cover-card {
@@ -187,6 +236,57 @@
       font-size: 0.8rem;
       line-height: 1.5;
       border: 2px dashed var(--border-color);
+      max-height: 140px;
+      overflow-y: auto;
+    }
+
+    .quick-paste-btn {
+      background: #FFFFFF;
+      color: var(--primary-deep);
+      border: 2px solid #FFFFFF;
+      font-size: 0.85rem;
+      font-weight: 900;
+      padding: 10px 16px;
+      border-radius: 20px;
+      cursor: pointer;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      margin: 8px 0;
+    }
+
+    .chapter-tag {
+      display: inline-flex;
+      background: var(--primary-soft);
+      border: 1px solid var(--border-color);
+      color: var(--primary-deep);
+      font-size: 0.72rem;
+      font-weight: 800;
+      padding: 3px 10px;
+      border-radius: 14px;
+      margin-bottom: 4px;
+    }
+
+    .chapter-header {
+      font-size: 1.05rem;
+      font-weight: 800;
+      margin-bottom: 10px;
+    }
+
+    .hotel-banner {
+      background: var(--primary-soft);
+      border: 1px solid var(--border-color);
+      color: var(--primary-deep);
+      font-size: 0.74rem;
+      font-weight: 700;
+      padding: 6px 10px;
+      border-radius: 10px;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
     }
 
     .timeline-stack {
@@ -202,6 +302,7 @@
       padding: 9px 12px;
       position: relative;
       cursor: pointer;
+      transition: all 0.2s ease;
     }
 
     .story-card.completed {
@@ -223,6 +324,13 @@
       transform: rotate(-6deg);
     }
 
+    .card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 6px;
+    }
+
     .badge-time {
       font-size: 0.72rem;
       font-weight: 800;
@@ -230,17 +338,57 @@
       color: var(--primary-deep);
       padding: 2px 6px;
       border-radius: 6px;
+      white-space: nowrap;
+    }
+
+    .card-headline {
+      font-size: 0.86rem;
+      font-weight: 800;
+      margin-left: 4px;
+      flex: 1;
+    }
+
+    .map-tag-group {
+      display: flex;
+      gap: 4px;
     }
 
     .map-btn {
+      border-radius: 8px;
+      padding: 2px 6px;
+      font-size: 0.65rem;
+      font-weight: 700;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 2px;
+    }
+    .map-btn.naver {
       background: var(--naver-bg);
       color: var(--naver-green);
       border: 1px solid #B8E8C7;
-      border-radius: 10px;
-      padding: 2px 7px;
-      font-size: 0.68rem;
-      font-weight: 700;
-      text-decoration: none;
+    }
+    .map-btn.google {
+      background: var(--google-bg);
+      color: var(--google-blue);
+      border: 1px solid #C2D7FB;
+    }
+
+    .card-text {
+      font-size: 0.76rem;
+      color: var(--ink-muted);
+      line-height: 1.45;
+      margin-top: 4px;
+    }
+
+    .page-tail {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 8px;
+      font-size: 0.7rem;
+      color: var(--ink-muted);
+      border-top: 1px dashed var(--border-color);
     }
 
     .book-controls {
@@ -266,834 +414,3 @@
       border-color: #D6C5B8;
       color: #9C8F84;
     }
-
-    /* 旅人日誌動態牆 (Threads / IG 風格) */
-    #communityView {
-      justify-content: flex-start;
-      padding: 10px 16px;
-      overflow-y: auto;
-    }
-
-    .feed-container {
-      width: 100%;
-      max-width: 440px;
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
-      padding-bottom: 70px;
-    }
-
-    .feed-card {
-      background: #FFFFFF;
-      border: 2px solid var(--border-color);
-      border-radius: 20px;
-      padding: 14px;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.04);
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    .feed-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .user-info {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .avatar {
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      background: var(--primary-soft);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.1rem;
-    }
-
-    .user-name { font-size: 0.86rem; font-weight: 800; }
-    .post-time { font-size: 0.68rem; color: var(--ink-muted); }
-
-    .follow-btn {
-      background: #FFF;
-      border: 1.5px solid var(--primary);
-      color: var(--primary);
-      font-size: 0.72rem;
-      font-weight: 800;
-      padding: 3px 10px;
-      border-radius: 14px;
-      cursor: pointer;
-    }
-    .follow-btn.following {
-      background: var(--primary-soft);
-      color: var(--ink-muted);
-      border-color: #E2D0C0;
-    }
-
-    .feed-caption {
-      font-size: 0.88rem;
-      line-height: 1.45;
-      color: var(--ink);
-      user-select: text;
-      -webkit-user-select: text;
-    }
-
-    .feed-media {
-      width: 100%;
-      border-radius: 14px;
-      overflow: hidden;
-      background: #000;
-      max-height: 320px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .feed-media img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-    .feed-media video {
-      width: 100%;
-      max-height: 320px;
-    }
-
-    /* 開啟對方繪本的醒目按鈕 */
-    .open-book-banner {
-      background: var(--primary-soft);
-      border: 1px dashed var(--primary);
-      border-radius: 12px;
-      padding: 8px 12px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      cursor: pointer;
-    }
-    .open-book-banner span {
-      font-size: 0.78rem;
-      font-weight: 800;
-      color: var(--primary-deep);
-    }
-
-    .feed-footer {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding-top: 6px;
-      border-top: 1px dashed #EFE5DB;
-    }
-
-    .action-group {
-      display: flex;
-      gap: 14px;
-    }
-
-    .post-action {
-      background: none;
-      border: none;
-      font-size: 0.8rem;
-      font-weight: 700;
-      color: var(--ink-muted);
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 4px;
-    }
-    .post-action.liked { color: #E85B07; }
-
-    /* 發文浮動按鈕 */
-    .post-fab {
-      position: fixed;
-      bottom: 24px;
-      right: 24px;
-      background: var(--primary);
-      color: #fff;
-      border: none;
-      width: 54px;
-      height: 54px;
-      border-radius: 50%;
-      box-shadow: 0 6px 18px rgba(232, 91, 7, 0.4);
-      font-size: 1.6rem;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      z-index: 20;
-    }
-
-    /* 彈窗樣式 */
-    .modal-overlay {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      background: rgba(0, 0, 0, 0.5);
-      z-index: 99;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-    }
-
-    .modal-sheet {
-      background: var(--paper-bg);
-      width: 100%;
-      max-width: 420px;
-      max-height: 90vh;
-      border-radius: 24px;
-      padding: 20px;
-      display: flex;
-      flex-direction: column;
-      box-shadow: 0 15px 35px rgba(0,0,0,0.25);
-      overflow-y: auto;
-    }
-
-    .char-count {
-      text-align: right;
-      font-size: 0.7rem;
-      color: var(--ink-muted);
-      margin-top: 4px;
-    }
-    .char-count.limit { color: #E85B07; font-weight: 800; }
-
-    .comment-list {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      max-height: 220px;
-      overflow-y: auto;
-      margin: 10px 0;
-      padding: 6px;
-      background: #FFF;
-      border-radius: 12px;
-      border: 1px solid var(--border-color);
-    }
-    .comment-item {
-      font-size: 0.78rem;
-      line-height: 1.4;
-      padding-bottom: 6px;
-      border-bottom: 1px dashed #EEE;
-    }
-    .comment-item strong { color: var(--primary-deep); }
-
-    .modal-actions {
-      display: flex;
-      gap: 10px;
-      margin-top: 10px;
-    }
-
-    .submit-btn {
-      flex: 1;
-      background: var(--primary);
-      color: #fff;
-      border: none;
-      border-radius: 14px;
-      padding: 10px;
-      font-weight: 800;
-      cursor: pointer;
-    }
-
-    .close-btn {
-      background: #EFE4D9;
-      color: var(--ink);
-      border: none;
-      border-radius: 14px;
-      padding: 10px 16px;
-      font-weight: 700;
-      cursor: pointer;
-    }
-  </style>
-</head>
-<body>
-
-  <canvas id="effectCanvas"></canvas>
-
-  <header>
-    <div class="nav-tabs">
-      <button class="nav-tab active" id="tabBook" onclick="switchView('book')">📖 故事書</button>
-      <button class="nav-tab" id="tabFeed" onclick="switchView('feed')">📸 旅人社群</button>
-    </div>
-    <div style="font-size:0.8rem; font-weight:800; color:var(--primary-deep);" id="bookAuthorLabel">📖 我的繪本</div>
-  </header>
-
-  <div class="view-container">
-    <!-- 視圖 1: 故事繪本 -->
-    <div class="view-panel active" id="bookView">
-      <div class="storybook-wrapper" id="storyWrapper">
-        <div class="storybook" id="storybook"></div>
-      </div>
-      <div class="book-controls">
-        <button class="action-btn" id="prevBtn" onclick="prevPage()" disabled>‹ 上一頁</button>
-        <button class="action-btn" id="nextBtn" onclick="nextPage()">下一頁 ›</button>
-      </div>
-    </div>
-
-    <!-- 視圖 2: 社群動態牆 -->
-    <div class="view-panel" id="communityView">
-      <div class="feed-container" id="feedContainer"></div>
-    </div>
-  </div>
-
-  <!-- 發文按鈕 (僅在社群模式出現) -->
-  <button class="post-fab" id="postFab" style="display:none;" onclick="openPostModal()">＋</button>
-
-  <!-- 1. 發布短影音/相片動態 (限80字) -->
-  <div class="modal-overlay" id="postModal">
-    <div class="modal-sheet">
-      <h3 style="margin-bottom: 6px; font-size:1.05rem; color:var(--primary-deep);">📸 分享旅行瞬間</h3>
-      <p style="font-size:0.72rem; color:var(--ink-muted); margin-bottom: 8px;">文字限 80 字，讓照片與影片說故事：</p>
-      
-      <textarea id="postContentInput" maxlength="80" oninput="updateCharCount()" placeholder="寫下一句話分享當下的畫面與感動..."></textarea>
-      <div class="char-count" id="charCountDisplay">0 / 80 字</div>
-
-      <div style="margin: 12px 0;">
-        <label style="font-size:0.75rem; font-weight:700; color:var(--ink-muted);">上傳主照或短影音（必填）：</label>
-        <input type="file" id="mediaFileInput" accept="image/*,video/*" onchange="handleFileSelect(event)" style="font-size:0.75rem; margin-top:4px;" />
-        <div id="mediaPreview" style="margin-top:6px; max-height:140px; overflow:hidden; border-radius:10px; display:none;"></div>
-      </div>
-
-      <div class="modal-actions">
-        <button class="close-btn" onclick="closePostModal()">取消</button>
-        <button class="submit-btn" onclick="submitPost()">✨ 發布動態</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- 2. 留言彈窗 -->
-  <div class="modal-overlay" id="commentModal">
-    <div class="modal-sheet">
-      <h3 style="font-size:1rem; color:var(--primary-deep); margin-bottom:6px;">💬 旅人留言互動</h3>
-      <div class="comment-list" id="modalCommentList"></div>
-      <div style="display:flex; gap:6px; margin-top:6px;">
-        <input type="text" id="newCommentInput" placeholder="寫下你的回應或詢問細節..." style="flex:1; border-radius:10px; border:1px solid #CCC; padding:8px; font-size:0.8rem; outline:none;" />
-        <button class="submit-btn" style="flex:none; padding:8px 14px;" onclick="addComment()">送出</button>
-      </div>
-      <button class="close-btn" style="margin-top:10px;" onclick="closeCommentModal()">關閉</button>
-    </div>
-  </div>
-
-  <script>
-    let currentPage = 0;
-    let pages = [];
-    let totalPages = 0;
-    let audioCtx = null;
-    let selectedMediaData = null;
-    let currentPostIdForComment = null;
-
-    // 我的預設行程 (9/12-9/16 濟州)
-    const MY_PLAN = `✈️ 航班與住宿資訊備忘
-去程：2026/09/12 虎航 IT632 07:00 台北 ➔ 10:00 濟州 (代碼: R3R7YY)
-回程：2026/09/16 虎航 IT655 10:30 濟州 ➔ 11:35 台北
-
-9/12（六）Day 1｜彩虹道路 ➔ 涯月拍貼 ➔ 981重力賽車
-住宿：濟州神話世界
-10:00–11:00｜抵達與取車：降落機場出關，搭接駁車取車。
-11:00–11:30｜道頭洞彩虹海岸道路：彩色石墩拍照散步。
-11:30–12:30｜Haru Film 涯月店：粉藍海景拍貼機、吃冰淇淋。
-14:15–16:15｜9.81 Park 重力賽車：重力競速與科技遊樂設施。
-16:45–19:30｜神話度假村設施暢玩：Check-in 放行李、玩水。
-21:30 之後｜宵夜：BHC 炸雞配生啤酒。
-
-9/13（日）Day 2｜西歸浦自然奇景 ➔ 親子休閒 ➔ 綠茶館
-住宿：濟州神話世界
-10:00–12:00｜Arte Kids Park：西南部大型互動科技樂園。
-12:30–14:00｜午餐：濟州炭烤活鰻魚料理。
-14:00–16:30｜西歸浦順遊：柱狀節理帶、正房瀑布、偶來市場。
-16:30–18:30｜雪綠茶博物館：Innisfree 綠茶冰淇淋。
-21:30 之後｜宵夜：韓式炸醬麵＋酥脆糖醋肉。
-
-9/14（一）Day 3｜換飯店 ➔ 鮑魚粥 ➔ 藍瓶咖啡 ➔ 東部海景
-住宿：Hotel RegentMarine The Blue
-10:30–11:45｜早午餐：濟州濃郁鮑魚粥。
-12:00–13:00｜藍瓶咖啡：手沖咖啡與濟州限定特調打卡。
-13:30–15:15｜月汀里海灘：果凍海漫步、海邊放空。
-15:30–16:45｜細花排骨：招牌燉牛排骨。
-18:00–20:30｜市區購物：東門市場、七星街與樂天超市。
-22:00 之後｜宵夜：Baro 豬腳 ＋ 獵奇辣炒年糕。`;
-
-    // 旅伴示範行程（點擊對方的發文時開啟）
-    const PARTNER_PLAN = `✈️ 釜山海邊度假 3D2N 輕旅行
-去程：台灣虎航 桃園 ➔ 釜山金海機場
-
-Day 1｜海雲台海濱膠囊列車
-住宿：Signiel Busan 酒店
-13:00–14:30｜尾浦搭乘五彩海濱膠囊列車看海
-15:00–17:00｜海雲台迎月路漫步咖啡廳
-18:30–20:30｜午餐：巨濟水產市場生魚片大餐
-21:00 之後｜The Bay 101 看夜景倒影
-
-Day 2｜廣安里無人機光影秀
-住宿：Signiel Busan 酒店
-11:00–13:00｜白淺灘文化村海邊咖啡店
-15:00–18:00｜新世界百貨 Spa Land 汗蒸幕放鬆
-20:00–21:30｜廣安里沙灘邊吃炸雞邊看無人機秀`;
-
-    // --- IndexedDB ---
-    let db = null;
-    function initDB() {
-      return new Promise((resolve) => {
-        const req = indexedDB.open("FairytaleSocialDB", 1);
-        req.onupgradeneeded = (e) => {
-          const dbInstance = e.target.result;
-          if (!dbInstance.objectStoreNames.contains("posts")) {
-            dbInstance.createObjectStore("posts", { keyPath: "id" });
-          }
-        };
-        req.onsuccess = (e) => {
-          db = e.target.result;
-          resolve(db);
-        };
-      });
-    }
-
-    function savePostToDB(post) {
-      const tx = db.transaction(["posts"], "readwrite");
-      tx.objectStore("posts").put(post);
-    }
-
-    function getAllPostsFromDB() {
-      return new Promise((resolve) => {
-        const tx = db.transaction(["posts"], "readonly");
-        const req = tx.objectStore("posts").getAll();
-        req.onsuccess = () => resolve(req.result || []);
-      });
-    }
-
-    function initAudio() {
-      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      if (audioCtx.state === 'suspended') audioCtx.resume();
-    }
-
-    function playPop() {
-      try {
-        initAudio();
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-        osc.frequency.setValueAtTime(520, audioCtx.currentTime);
-        osc.frequency.exponentialRampToValueAtTime(950, audioCtx.currentTime + 0.08);
-        gain.gain.setValueAtTime(0.35, audioCtx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.08);
-        osc.connect(gain);
-        gain.connect(audioCtx.destination);
-        osc.start();
-        osc.stop(audioCtx.currentTime + 0.08);
-      } catch(e){}
-    }
-
-    function playFlip() {
-      try {
-        initAudio();
-        const buf = audioCtx.createBuffer(1, audioCtx.sampleRate * 0.1, audioCtx.sampleRate);
-        const data = buf.getChannelData(0);
-        for (let i = 0; i < data.length; i++) data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (data.length * 0.3));
-        const src = audioCtx.createBufferSource();
-        src.buffer = buf;
-        const filter = audioCtx.createBiquadFilter();
-        filter.frequency.setValueAtTime(700, audioCtx.currentTime);
-        src.connect(filter);
-        filter.connect(audioCtx.destination);
-        src.start();
-      } catch(e){}
-    }
-
-    function switchView(view) {
-      document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
-      document.querySelectorAll('.view-panel').forEach(p => p.classList.remove('active'));
-
-      if (view === 'book') {
-        document.getElementById('tabBook').classList.add('active');
-        document.getElementById('bookView').classList.add('active');
-        document.getElementById('postFab').style.display = 'none';
-      } else {
-        document.getElementById('tabFeed').classList.add('active');
-        document.getElementById('communityView').classList.add('active');
-        document.getElementById('postFab').style.display = 'flex';
-        loadFeed();
-      }
-    }
-
-    // 文字字數限制倒數
-    function updateCharCount() {
-      const len = document.getElementById('postContentInput').value.length;
-      const display = document.getElementById('charCountDisplay');
-      display.textContent = `${len} / 80 字`;
-      display.classList.toggle('limit', len >= 80);
-    }
-
-    function handleFileSelect(e) {
-      const file = e.target.files[0];
-      if (!file) return;
-      const isVideo = file.type.startsWith('video/');
-      const reader = new FileReader();
-      reader.onload = function(evt) {
-        selectedMediaData = {
-          type: isVideo ? 'video' : 'image',
-          url: evt.target.result
-        };
-        const box = document.getElementById('mediaPreview');
-        box.style.display = 'block';
-        box.innerHTML = isVideo ? `<video src="${evt.target.result}" controls style="width:100%; height:120px; object-fit:cover;"></video>` : `<img src="${evt.target.result}" style="width:100%; height:120px; object-fit:cover;" />`;
-      };
-      reader.readAsDataURL(file);
-    }
-
-    function openPostModal() {
-      document.getElementById('postContentInput').value = '';
-      updateCharCount();
-      document.getElementById('mediaPreview').style.display = 'none';
-      document.getElementById('mediaFileInput').value = '';
-      selectedMediaData = null;
-      document.getElementById('postModal').style.display = 'flex';
-    }
-    function closePostModal() { document.getElementById('postModal').style.display = 'none'; }
-
-    async function submitPost() {
-      const content = document.getElementById('postContentInput').value.trim();
-      if (!selectedMediaData) {
-        alert('這是一個以照片與影片為主的社群，請至少選取一張照片或影片喔！');
-        return;
-      }
-
-      const newPost = {
-        id: "post_" + Date.now(),
-        author: "漫遊旅人（我）",
-        avatar: "🍊",
-        time: "剛剛",
-        text: content,
-        media: selectedMediaData,
-        likes: 0,
-        isFollowing: false,
-        comments: [],
-        boundPlan: MY_PLAN // 綁定我的行程
-      };
-
-      savePostToDB(newPost);
-      playPop();
-      closePostModal();
-      loadFeed();
-    }
-
-    async function loadFeed() {
-      const container = document.getElementById('feedContainer');
-      container.innerHTML = '';
-      let posts = await getAllPostsFromDB();
-
-      // 若為初次開啟，預設一則社群示範旅人動態
-      if (posts.length === 0) {
-        const demo = {
-          id: "demo_partner_1",
-          author: "海島散策家 Min",
-          avatar: "🌊",
-          time: "2 小時前",
-          text: "剛搭上海雲台膠囊列車！窗外一整片漸層藍，完全不需要濾鏡，太美了！",
-          media: {
-            type: "image",
-            url: "https://images.unsplash.com/photo-1578632767115-351597cf2477?w=600&auto=format&fit=crop&q=80"
-          },
-          likes: 12,
-          isFollowing: false,
-          comments: ["哇！這家膠囊列車需要提前預約嗎？", "好夢幻的果凍海！"],
-          boundPlan: PARTNER_PLAN // 綁定他的釜山行程
-        };
-        posts.push(demo);
-      }
-
-      posts.reverse().forEach(p => {
-        let mediaHtml = '';
-        if (p.media) {
-          mediaHtml = p.media.type === 'video'
-            ? `<div class="feed-media"><video src="${p.media.url}" controls playsinline></video></div>`
-            : `<div class="feed-media"><img src="${p.media.url}" /></div>`;
-        }
-
-        const card = document.createElement('div');
-        card.className = 'feed-card';
-        card.innerHTML = `
-          <div class="feed-header">
-            <div class="user-info">
-              <div class="avatar">${p.avatar || '🍊'}</div>
-              <div>
-                <div class="user-name">${p.author}</div>
-                <div class="post-time">${p.time}</div>
-              </div>
-            </div>
-            <button class="follow-btn ${p.isFollowing ? 'following' : ''}" onclick="toggleFollow('${p.id}', this)">
-              ${p.isFollowing ? '追蹤中' : '+ 追蹤'}
-            </button>
-          </div>
-
-          ${p.text ? `<div class="feed-caption">${p.text}</div>` : ''}
-          ${mediaHtml}
-
-          <!-- 關鍵功能：一鍵翻開對方的行程繪本 -->
-          <div class="open-book-banner" onclick="openAuthorBook('${p.author}', \`${encodeURIComponent(p.boundPlan || MY_PLAN)}\`)">
-            <span>📖 翻開 ${p.author} 的專屬繪本手帳</span>
-            <span style="font-size:0.7rem;">點擊查看 ›</span>
-          </div>
-
-          <div class="feed-footer">
-            <div class="action-group">
-              <button class="post-action" onclick="likePost('${p.id}', this)">❤️ <span>${p.likes}</span></button>
-              <button class="post-action" onclick="openComments('${p.id}')">💬 <span>${p.comments ? p.comments.length : 0}</span></button>
-            </div>
-            <button class="post-action" onclick="sharePost('${p.author}', '${p.text || '精彩旅程'}')">🔗 分享</button>
-          </div>
-        `;
-        container.appendChild(card);
-      });
-    }
-
-    function toggleFollow(postId, btn) {
-      playPop();
-      btn.classList.toggle('following');
-      btn.textContent = btn.classList.contains('following') ? '追蹤中' : '+ 追蹤';
-    }
-
-    function likePost(id, btn) {
-      playPop();
-      btn.classList.toggle('liked');
-      const span = btn.querySelector('span');
-      let val = parseInt(span.textContent);
-      span.textContent = btn.classList.contains('liked') ? val + 1 : val - 1;
-    }
-
-    function sharePost(author, text) {
-      playPop();
-      if (navigator.share) {
-        navigator.share({
-          title: `${author} 的童話旅行手記`,
-          text: text,
-          url: window.location.href
-        }).catch(()=>{});
-      } else {
-        alert('已複製手記連結，快貼給朋友或分享到 Threads 吧！');
-      }
-    }
-
-    // 留言系統
-    let activeCommentsList = [];
-    async function openComments(postId) {
-      currentPostIdForComment = postId;
-      const posts = await getAllPostsFromDB();
-      const p = posts.find(item => item.id === postId);
-      activeCommentsList = p && p.comments ? p.comments : ["太讚了！", "求問住宿在哪裡～"];
-      renderComments();
-      document.getElementById('commentModal').style.display = 'flex';
-    }
-
-    function renderComments() {
-      const list = document.getElementById('modalCommentList');
-      list.innerHTML = activeCommentsList.map(c => `
-        <div class="comment-item"><strong>旅人：</strong>${c}</div>
-      `).join('');
-    }
-
-    function addComment() {
-      const input = document.getElementById('newCommentInput');
-      const val = input.value.trim();
-      if (!val) return;
-      activeCommentsList.push(val);
-      renderComments();
-      input.value = '';
-      playPop();
-    }
-    function closeCommentModal() { document.getElementById('commentModal').style.display = 'none'; }
-
-    // 開啟對方的繪本
-    function openAuthorBook(author, encodedPlan) {
-      playFlip();
-      const planText = decodeURIComponent(encodedPlan);
-      document.getElementById('bookAuthorLabel').textContent = `📖 ${author} 的繪本`;
-      renderBook(parseItinerary(planText));
-      switchView('book');
-    }
-
-    // --- 繪本渲染引擎 ---
-    function parseItinerary(rawText) {
-      const lines = rawText.split('\n').map(l => l.trim()).filter(l => l);
-      let flightInfo = "";
-      const days = [];
-      let currentDay = null;
-
-      lines.forEach(line => {
-        if (/(Day\s*\d+|第\s*\d+\s*天|\d+\/\d+)/i.test(line) && !line.includes('住宿') && !line.includes('–') && !line.includes('-')) {
-          if (currentDay) days.push(currentDay);
-          currentDay = { title: line, hotel: '', events: [] };
-          return;
-        }
-        if (/住宿[：:]/i.test(line)) {
-          if (currentDay) currentDay.hotel = line.replace(/住宿[：:]/i, '').trim();
-          return;
-        }
-        if (/去程|回程|航班|代碼/i.test(line) && !currentDay) {
-          flightInfo += line + "<br/>";
-          return;
-        }
-
-        const timeMatch = line.match(/^(\d{1,2}:\d{2}\s*[-–~]\s*\d{1,2}:\d{2}|\d{1,2}:\d{2}\s*之後|[上下]午|晚餐|早午餐|早餐)/);
-        if (timeMatch && currentDay) {
-          const time = timeMatch[0];
-          let rest = line.substring(time.length).replace(/^[｜|:\s]+/, '');
-          let title = rest;
-          let desc = '';
-          if (rest.includes('：') || rest.includes(':')) {
-            const parts = rest.split(/[：:]/);
-            title = parts[0].trim();
-            desc = parts.slice(1).join(':').trim();
-          }
-          currentDay.events.push({ time, title, desc });
-        }
-      });
-      if (currentDay) days.push(currentDay);
-      return { flightInfo, days };
-    }
-
-    function renderBook(data) {
-      const book = document.getElementById('storybook');
-      book.innerHTML = '';
-      let totalPagesCount = data.days.length + 1;
-
-      let coverHtml = `
-        <div class="page cover-page" style="z-index: ${totalPagesCount};">
-          <div>
-            <div style="font-size:0.75rem; font-weight:800; background:rgba(255,255,255,0.25); display:inline-block; padding:4px 12px; border-radius:20px;">FAIRY TALE ITINERARY</div>
-            <div style="font-size:4rem; margin:8px 0;">🍊✨</div>
-            <h1 class="cover-title">童話漫遊繪本</h1>
-          </div>
-          <div class="cover-card">
-            <strong style="color:var(--primary-deep);">✈️ 航班與出行備忘</strong><br/>
-            ${data.flightInfo || '自由漫遊模式'}
-          </div>
-          <p style="font-size:0.7rem; opacity:0.85;">（向左滑動翻閱旅程）</p>
-        </div>
-      `;
-      book.innerHTML += coverHtml;
-
-      data.days.forEach((day, index) => {
-        let z = totalPagesCount - (index + 1);
-        let eventsHtml = day.events.map(ev => {
-          let naverSearchUrl = `https://map.naver.com/v5/search/${encodeURIComponent(ev.title)}`;
-          return `
-            <div class="story-card" onclick="this.classList.toggle('completed'); playPop();">
-              <div style="display:flex; justify-content:space-between; align-items:flex-start;">
-                <span class="badge-time">${ev.time}</span>
-                <span style="font-size:0.86rem; font-weight:800; margin-left:4px; flex:1;">${ev.title}</span>
-                <a class="map-btn" href="${naverSearchUrl}" target="_blank" onclick="event.stopPropagation()">🧭 Naver</a>
-              </div>
-              ${ev.desc ? `<div style="font-size:0.75rem; color:var(--ink-muted); margin-top:4px;">${ev.desc}</div>` : ''}
-            </div>
-          `;
-        }).join('');
-
-        let hotelHtml = day.hotel ? `
-          <div style="background:var(--primary-soft); border:1px solid var(--border-color); color:var(--primary-deep); font-size:0.74rem; font-weight:700; padding:6px 10px; border-radius:10px; margin-bottom:12px; display:flex; justify-content:space-between;">
-            <span>🏡 住宿：${day.hotel}</span>
-            <a class="map-btn" href="https://map.naver.com/v5/search/${encodeURIComponent(day.hotel)}" target="_blank" onclick="event.stopPropagation()">🧭 Naver</a>
-          </div>
-        ` : '';
-
-        let pageHtml = `
-          <div class="page" style="z-index: ${z};">
-            <div class="page-scroll">
-              <div style="display:inline-flex; background:var(--primary-soft); border:1px solid var(--border-color); color:var(--primary-deep); font-size:0.72rem; font-weight:800; padding:3px 10px; border-radius:14px; margin-bottom:4px;">CHAPTER 0${index + 1}</div>
-              <h2 style="font-size:1.05rem; font-weight:800; margin-bottom:10px;">${day.title}</h2>
-              ${hotelHtml}
-              <div class="timeline-stack">
-                ${eventsHtml}
-              </div>
-            </div>
-            <div style="display:flex; justify-content:space-between; padding-top:8px; font-size:0.7rem; color:var(--ink-muted); border-top:1px dashed var(--border-color);">
-              <span>Day ${index + 1}</span>
-              <span>第 ${index + 1} 頁</span>
-            </div>
-          </div>
-        `;
-        book.innerHTML += pageHtml;
-      });
-
-      currentPage = 0;
-      pages = document.querySelectorAll('.page');
-      totalPages = pages.length;
-      updateControls();
-    }
-
-    function updateControls() {
-      document.getElementById('prevBtn').disabled = (currentPage === 0);
-      document.getElementById('nextBtn').disabled = (currentPage >= totalPages - 1);
-    }
-    function nextPage() {
-      if (currentPage < totalPages - 1) {
-        playFlip();
-        pages[currentPage].classList.add('flipped');
-        currentPage++;
-        updateControls();
-      }
-    }
-    function prevPage() {
-      if (currentPage > 0) {
-        playFlip();
-        currentPage--;
-        pages[currentPage].classList.remove('flipped');
-        updateControls();
-      }
-    }
-
-    let startX = 0;
-    const wrapper = document.getElementById('storyWrapper');
-    wrapper.addEventListener('touchstart', e => { startX = e.touches[0].clientX; }, { passive: true });
-    wrapper.addEventListener('touchend', e => {
-      const diff = e.changedTouches[0].clientX - startX;
-      if (Math.abs(diff) > 45) {
-        if (diff < 0) nextPage();
-        else prevPage();
-      }
-    }, { passive: true });
-
-    // 漂浮動效
-    const canvas = document.getElementById('effectCanvas');
-    const ctx = canvas.getContext('2d');
-    let w, h;
-    function resize() { w = canvas.width = window.innerWidth; h = canvas.height = window.innerHeight; }
-    window.addEventListener('resize', resize);
-    resize();
-
-    const particles = Array.from({ length: 12 }, () => ({
-      x: Math.random() * w,
-      y: Math.random() * h,
-      size: 14 + Math.random() * 12,
-      spY: 0.6 + Math.random() * 0.8,
-      rot: Math.random() * 6.28
-    }));
-
-    function anim() {
-      ctx.clearRect(0, 0, w, h);
-      particles.forEach(p => {
-        p.y += p.spY;
-        p.rot += 0.01;
-        if (p.y > h + 30) p.y = -20;
-        ctx.save();
-        ctx.translate(p.x, p.y);
-        ctx.rotate(p.rot);
-        ctx.font = `${p.size}px sans-serif`;
-        ctx.textAlign = 'center';
-        ctx.fillText('🍊', 0, 0);
-        ctx.restore();
-      });
-      requestAnimationFrame(anim);
-    }
-    anim();
-
-    window.addEventListener('DOMContentLoaded', async () => {
-      await initDB();
-      renderBook(parseItinerary(MY_PLAN));
-    });
-  </script>
-</body>
-</html>
