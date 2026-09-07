@@ -1,0 +1,901 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <title>自訂童話繪本 📖 旅遊手帳</title>
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="theme-color" content="#FF7E36" />
+
+  <style>
+    :root {
+      --primary: #FF7E36;
+      --primary-deep: #E85B07;
+      --primary-soft: #FFF2E6;
+      --paper-bg: #FFFCF7;
+      --paper-card: #FFFFFF;
+      --border-color: #F7DFC7;
+      --ink: #3B2F2F;
+      --ink-muted: #7D6F69;
+      --naver-green: #03C75A;
+      --naver-bg: #E8F8EE;
+      --floating-symbol: "🍊";
+      --app-bg-1: #FFF4E5;
+      --app-bg-2: #F5E5D3;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-user-select: none;
+      -webkit-tap-highlight-color: transparent;
+      font-family: -apple-system, BlinkMacSystemFont, "PingFang TC", "Noto Sans TC", "微軟正黑體", sans-serif;
+    }
+
+    body {
+      background: radial-gradient(circle at center, var(--app-bg-1) 0%, var(--app-bg-2) 100%);
+      color: var(--ink);
+      height: 100vh;
+      height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      position: relative;
+    }
+
+    #effectCanvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .top-bar {
+      position: absolute;
+      top: 14px;
+      right: 18px;
+      z-index: 10;
+      display: flex;
+      gap: 8px;
+    }
+
+    .ctrl-pill-btn {
+      background: rgba(255, 255, 255, 0.88);
+      border: 1px solid #DFCEC1;
+      color: var(--primary-deep);
+      font-size: 0.78rem;
+      font-weight: 800;
+      padding: 6px 14px;
+      border-radius: 20px;
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+
+    /* 書本 3D 視角容器 */
+    .storybook-wrapper {
+      position: relative;
+      width: min(92vw, 420px);
+      height: min(84vh, 750px);
+      perspective: 1800px;
+      z-index: 2;
+    }
+
+    .storybook {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      transform-style: preserve-3d;
+      border-radius: 26px;
+      box-shadow: 0 22px 45px rgba(0,0,0,0.12);
+    }
+
+    .page {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      right: 0;
+      background-color: var(--paper-bg);
+      border-radius: 12px 26px 26px 12px;
+      border: 3px solid var(--border-color);
+      padding: 22px 18px 16px 22px;
+      display: flex;
+      flex-direction: column;
+      transform-origin: left center;
+      transform-style: preserve-3d;
+      transition: transform 0.75s cubic-bezier(0.25, 1, 0.35, 1);
+      box-shadow: inset 18px 0 25px -12px rgba(0,0,0,0.08);
+      overflow: hidden;
+    }
+
+    .page.flipped {
+      transform: rotateY(-180deg);
+      pointer-events: none;
+    }
+
+    .page-scroll {
+      height: 100%;
+      overflow-y: auto;
+      scrollbar-width: none;
+      padding-bottom: 24px;
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+    }
+    .page-scroll::-webkit-scrollbar { display: none; }
+
+    /* 封面 */
+    .cover-page {
+      background: linear-gradient(150deg, var(--primary) 0%, var(--primary-deep) 100%);
+      color: #FFFFFF;
+      border: 3px solid var(--primary-deep);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      text-align: center;
+      padding: 34px 22px;
+      border-radius: 26px;
+    }
+
+    .cover-illu {
+      font-size: 4.4rem;
+      cursor: pointer;
+      display: inline-block;
+      animation: cuteWiggle 3s ease-in-out infinite;
+      margin: 8px 0;
+    }
+    @keyframes cuteWiggle {
+      0%, 100% { transform: translateY(0) rotate(-3deg); }
+      50% { transform: translateY(-8px) rotate(4deg); }
+    }
+
+    .cover-title {
+      font-size: 1.85rem;
+      font-weight: 900;
+      text-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+    }
+
+    .cover-card {
+      background: #FFFFFF;
+      color: var(--ink);
+      border-radius: 16px;
+      padding: 13px 15px;
+      text-align: left;
+      font-size: 0.8rem;
+      line-height: 1.55;
+      border: 2px dashed var(--border-color);
+      box-shadow: 0 6px 16px rgba(0,0,0,0.06);
+    }
+
+    /* 內頁卡片 */
+    .chapter-tag {
+      display: inline-flex;
+      background: var(--primary-soft);
+      border: 1px solid var(--border-color);
+      color: var(--primary-deep);
+      font-size: 0.72rem;
+      font-weight: 800;
+      padding: 4px 12px;
+      border-radius: 16px;
+      margin-bottom: 6px;
+    }
+
+    .chapter-header {
+      font-size: 1.1rem;
+      font-weight: 800;
+      line-height: 1.35;
+      margin-bottom: 12px;
+    }
+
+    .hotel-banner {
+      background: var(--primary-soft);
+      border: 1px solid var(--border-color);
+      color: var(--primary-deep);
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 7px 12px;
+      border-radius: 12px;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .timeline-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .story-card {
+      background: var(--paper-card);
+      border: 1.5px solid var(--border-color);
+      border-radius: 14px;
+      padding: 10px 13px;
+      position: relative;
+      cursor: pointer;
+      transition: transform 0.15s ease;
+    }
+    .story-card:active { transform: scale(0.98); }
+
+    .story-card.completed {
+      border-color: #8FD19E;
+      background: #F8FFF9;
+    }
+    .story-card.completed::after {
+      content: "✓ 完成";
+      position: absolute;
+      right: 12px;
+      bottom: 8px;
+      background: rgba(62, 126, 67, 0.12);
+      color: #2F6B38;
+      border: 1px dashed #2F6B38;
+      font-size: 0.65rem;
+      font-weight: 800;
+      padding: 2px 6px;
+      border-radius: 6px;
+      transform: rotate(-6deg);
+    }
+
+    .card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 6px;
+    }
+
+    .badge-time {
+      font-size: 0.74rem;
+      font-weight: 800;
+      background: var(--primary-soft);
+      color: var(--primary-deep);
+      padding: 2px 7px;
+      border-radius: 8px;
+    }
+
+    .card-headline {
+      font-size: 0.88rem;
+      font-weight: 800;
+      margin-left: 6px;
+      flex: 1;
+    }
+
+    .card-text {
+      font-size: 0.78rem;
+      color: var(--ink-muted);
+      line-height: 1.48;
+      margin-top: 5px;
+    }
+
+    .map-btn {
+      background: var(--naver-bg);
+      color: var(--naver-green);
+      border: 1px solid #B8E8C7;
+      border-radius: 12px;
+      padding: 2px 8px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-decoration: none;
+      flex-shrink: 0;
+    }
+
+    .page-tail {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 10px;
+      font-size: 0.72rem;
+      color: var(--ink-muted);
+      border-top: 1px dashed var(--border-color);
+    }
+
+    .book-controls {
+      margin-top: 14px;
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      z-index: 2;
+    }
+
+    .action-btn {
+      background: #FFFFFF;
+      color: var(--primary-deep);
+      border: 2px solid var(--primary);
+      padding: 8px 18px;
+      border-radius: 30px;
+      font-size: 0.84rem;
+      font-weight: 800;
+      cursor: pointer;
+    }
+    .action-btn:disabled {
+      opacity: 0.35;
+      pointer-events: none;
+      border-color: #D6C5B8;
+      color: #9C8F84;
+    }
+
+    /* 彈窗樣式 */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.45);
+      z-index: 99;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .modal-sheet {
+      background: var(--paper-bg);
+      width: 100%;
+      max-width: 440px;
+      max-height: 90vh;
+      border-radius: 24px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+      overflow-y: auto;
+    }
+
+    .modal-sheet textarea {
+      width: 100%;
+      min-height: 200px;
+      border-radius: 12px;
+      border: 1.5px solid var(--border-color);
+      padding: 12px;
+      font-size: 0.85rem;
+      font-family: monospace;
+      outline: none;
+      resize: none;
+      user-select: text;
+      -webkit-user-select: text;
+    }
+
+    .theme-preset-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+
+    .theme-pill {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 10px;
+      border-radius: 12px;
+      background: #FFFFFF;
+      border: 1.5px solid #E5D0BF;
+      cursor: pointer;
+      font-size: 0.76rem;
+      font-weight: 700;
+    }
+    .theme-pill.active {
+      border-color: var(--primary-deep);
+      background: var(--primary-soft);
+    }
+
+    .custom-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+      font-size: 0.8rem;
+      font-weight: 700;
+    }
+    .custom-row input[type="color"] {
+      border: none;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      cursor: pointer;
+      background: transparent;
+    }
+    .custom-row select {
+      padding: 4px 8px;
+      border-radius: 8px;
+      border: 1px solid #CCC;
+      outline: none;
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .submit-btn {
+      flex: 1;
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      border-radius: 14px;
+      padding: 10px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .close-btn {
+      background: #EFE4D9;
+      color: var(--ink);
+      border: none;
+      border-radius: 14px;
+      padding: 10px 16px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <canvas id="effectCanvas"></canvas>
+
+  <div class="top-bar">
+    <button class="ctrl-pill-btn" onclick="openThemeModal()">🎨 主題風格</button>
+    <button class="ctrl-pill-btn" onclick="openPlanModal()">📝 編輯行程</button>
+  </div>
+
+  <div class="storybook-wrapper" id="storyWrapper">
+    <div class="storybook" id="storybook"></div>
+  </div>
+
+  <div class="book-controls">
+    <button class="action-btn" id="prevBtn" onclick="prevPage()" disabled>‹ 上一頁</button>
+    <button class="action-btn" id="nextBtn" onclick="nextPage()">下一頁 ›</button>
+  </div>
+
+  <div class="modal-overlay" id="planModal">
+    <div class="modal-sheet">
+      <h3 style="margin-bottom: 8px; font-size:1.1rem; color:var(--primary-deep);">📋 貼上行程文字</h3>
+      <p style="font-size:0.75rem; color:var(--ink-muted); margin-bottom: 12px;">直接貼上 LINE 記事本或規劃文字，系統自動辨識並轉成繪本：</p>
+      <textarea id="rawTextInput" placeholder="支援純文字格式貼入..."></textarea>
+      <div class="modal-actions">
+        <button class="close-btn" onclick="closePlanModal()">取消</button>
+        <button class="submit-btn" onclick="applyPlanText()">✨ 生成繪本</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="themeModal">
+    <div class="modal-sheet">
+      <h3 style="margin-bottom: 8px; font-size:1.1rem; color:var(--primary-deep);">🎨 自訂童話主題與風格</h3>
+      
+      <div style="font-size:0.78rem; font-weight:800; margin: 8px 0 6px;">快速預設風格</div>
+      <div class="theme-preset-grid">
+        <div class="theme-pill" onclick="selectPreset('jeju')">🍊 濟州甜橘 (預設)</div>
+        <div class="theme-pill" onclick="selectPreset('cherry')">🌸 京都粉櫻</div>
+        <div class="theme-pill" onclick="selectPreset('ocean')">🌊 沖繩蔚藍</div>
+        <div class="theme-pill" onclick="selectPreset('forest')">🍃 輕井澤森綠</div>
+        <div class="theme-pill" onclick="selectPreset('vintage')">☕ 復古羊皮紙</div>
+      </div>
+
+      <div style="font-size:0.78rem; font-weight:800; margin: 10px 0 6px;">微調個人配色</div>
+      <div class="custom-row">
+        <span>主題代表主色</span>
+        <input type="color" id="themeColorPick" onchange="updateCustomColors()" />
+      </div>
+      <div class="custom-row">
+        <span>背景漂浮動效</span>
+        <select id="floatingSymbolSelect" onchange="updateFloatingSymbol()">
+          <option value="🍊">濟州柑橘 🍊</option>
+          <option value="🌸">浪漫櫻花 🌸</option>
+          <option value="🌊">浪花泡泡 🫧</option>
+          <option value="🍃">悠閒綠葉 🍃</option>
+          <option value="✨">童話星光 ✨</option>
+          <option value="none">無特效 (省電)</option>
+        </select>
+      </div>
+
+      <div class="modal-actions">
+        <button class="close-btn" onclick="closeThemeModal()">關閉</button>
+        <button class="submit-btn" onclick="saveThemeSettings()">💾 儲存風格</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let currentPage = 0;
+    let pages = [];
+    let totalPages = 0;
+    let audioCtx = null;
+
+    // 內建 5 款風格預設主題
+    const PRESETS = {
+      jeju: {
+        primary: "#FF7E36",
+        primaryDeep: "#E85B07",
+        primarySoft: "#FFF2E6",
+        paperBg: "#FFFCF7",
+        borderColor: "#F7DFC7",
+        bg1: "#FFF4E5",
+        bg2: "#F5E5D3",
+        symbol: "🍊"
+      },
+      cherry: {
+        primary: "#F48FB1",
+        primaryDeep: "#C2185B",
+        primarySoft: "#FCE4EC",
+        paperBg: "#FFF9FA",
+        borderColor: "#F8BBD0",
+        bg1: "#FDEEF2",
+        bg2: "#F8D7DA",
+        symbol: "🌸"
+      },
+      ocean: {
+        primary: "#38BDF8",
+        primaryDeep: "#0284C7",
+        primarySoft: "#E0F2FE",
+        paperBg: "#F8FAFC",
+        borderColor: "#BAE6FD",
+        bg1: "#E0F7FA",
+        bg2: "#B2EBF2",
+        symbol: "🌊"
+      },
+      forest: {
+        primary: "#4CAF50",
+        primaryDeep: "#2E7D32",
+        primarySoft: "#E8F5E9",
+        paperBg: "#FBFDFB",
+        borderColor: "#C8E6C9",
+        bg1: "#E8F5E9",
+        bg2: "#C8E6C9",
+        symbol: "🍃"
+      },
+      vintage: {
+        primary: "#A0714F",
+        primaryDeep: "#6D4C41",
+        primarySoft: "#EFEBE9",
+        paperBg: "#F7F3E9",
+        borderColor: "#D7CCC8",
+        bg1: "#EAE0D5",
+        bg2: "#D8C3B0",
+        symbol: "☕"
+      }
+    };
+
+    let activeTheme = { ...PRESETS.jeju };
+
+    const DEFAULT_DATA = `✈️ 航班與住宿資訊備忘
+去程：2026/09/12 虎航 IT632 07:00 台北 ➔ 10:00 濟州 (代碼: R3R7YY)
+回程：2026/09/16 虎航 IT655 10:30 濟州 ➔ 11:35 台北
+
+9/12（六）Day 1｜彩虹道路 ➔ 涯月拍貼 ➔ 981重力賽車
+住宿：濟州神話世界
+10:00–11:00｜抵達與取車：降落機場出關，搭接駁車取車。
+11:00–11:30｜道頭洞彩虹海岸道路：彩色石墩拍照散步。
+11:30–12:30｜Haru Film 涯月店：粉藍海景拍貼機、吃冰淇淋。
+14:15–16:15｜9.81 Park 重力賽車：重力競速與科技遊樂設施。
+16:45–19:30｜神話度假村設施暢玩：Check-in 放行李、玩水。
+21:30 之後｜宵夜：BHC 炸雞配生啤酒。
+
+9/13（日）Day 2｜西歸浦自然奇景 ➔ 親子休閒 ➔ 綠茶館
+住宿：濟州神話世界
+10:00–12:00｜Arte Kids Park：西南部大型互動科技樂園。
+12:30–14:00｜午餐：濟州炭烤活鰻魚料理。
+14:00–16:30｜西歸浦順遊：柱狀節理帶、正房瀑布、偶來市場。
+16:30–18:30｜雪綠茶博物館：Innisfree 綠茶冰淇淋。
+21:30 之後｜宵夜：韓式炸醬麵＋酥脆糖醋肉。
+
+9/14（一）Day 3｜換飯店 ➔ 鮑魚粥 ➔ 藍瓶咖啡 ➔ 東部海景
+住宿：Hotel RegentMarine The Blue
+10:30–11:45｜早午餐：濟州濃郁鮑魚粥。
+12:00–13:00｜藍瓶咖啡：手沖咖啡與濟州限定特調打卡。
+13:30–15:15｜月汀里海灘：果凍海漫步、海邊放空。
+15:30–16:45｜細花排骨：招牌燉牛排骨。
+18:00–20:30｜市區購物：東門市場、七星街與樂天超市。
+22:00 之後｜宵夜：Baro 豬腳 ＋ 獵奇辣炒年糕。`;
+
+    function initAudio() {
+      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+    }
+
+    function playFlip() {
+      try {
+        initAudio();
+        const buf = audioCtx.createBuffer(1, audioCtx.sampleRate * 0.1, audioCtx.sampleRate);
+        const data = buf.getChannelData(0);
+        for (let i = 0; i < data.length; i++) data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (data.length * 0.3));
+        const src = audioCtx.createBufferSource();
+        src.buffer = buf;
+        const filter = audioCtx.createBiquadFilter();
+        filter.frequency.setValueAtTime(700, audioCtx.currentTime);
+        src.connect(filter);
+        filter.connect(audioCtx.destination);
+        src.start();
+      } catch(e){}
+    }
+
+    function playPop() {
+      try {
+        initAudio();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.frequency.setValueAtTime(500, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(900, audioCtx.currentTime + 0.08);
+        gain.gain.setValueAtTime(0.35, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.08);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.08);
+      } catch(e){}
+    }
+
+    // 行程剖析器
+    function parseItinerary(rawText) {
+      const lines = rawText.split('\n').map(l => l.trim()).filter(l => l);
+      let flightInfo = "";
+      const days = [];
+      let currentDay = null;
+
+      lines.forEach(line => {
+        if (/(Day\s*\d+|第\s*\d+\s*天|\d+\/\d+)/i.test(line) && !line.includes('住宿') && !line.includes('–') && !line.includes('-')) {
+          if (currentDay) days.push(currentDay);
+          currentDay = { title: line, hotel: '', events: [], snack: '' };
+          return;
+        }
+        if (/住宿[：:]/i.test(line)) {
+          if (currentDay) currentDay.hotel = line.replace(/住宿[：:]/i, '').trim();
+          return;
+        }
+        if (/去程|回程|航班|代碼/i.test(line) && !currentDay) {
+          flightInfo += line + "<br/>";
+          return;
+        }
+
+        const timeMatch = line.match(/^(\d{1,2}:\d{2}\s*[-–~]\s*\d{1,2}:\d{2}|\d{1,2}:\d{2}\s*之後|[上下]午|晚餐|早午餐|早餐)/);
+        if (timeMatch && currentDay) {
+          const time = timeMatch[0];
+          let rest = line.substring(time.length).replace(/^[｜|:\s]+/, '');
+          let title = rest;
+          let desc = '';
+          if (rest.includes('：') || rest.includes(':')) {
+            const parts = rest.split(/[：:]/);
+            title = parts[0].trim();
+            desc = parts.slice(1).join(':').trim();
+          }
+          if (/宵夜/i.test(title)) {
+            currentDay.snack = `${title}：${desc}`;
+          } else {
+            currentDay.events.push({ time, title, desc });
+          }
+        }
+      });
+      if (currentDay) days.push(currentDay);
+      return { flightInfo, days };
+    }
+
+    function renderBook(data) {
+      const book = document.getElementById('storybook');
+      book.innerHTML = '';
+      let totalPagesCount = data.days.length + 1;
+
+      // 封面
+      let coverHtml = `
+        <div class="page cover-page" style="z-index: ${totalPagesCount};">
+          <div>
+            <div style="font-size:0.8rem; font-weight:800; background:rgba(255,255,255,0.25); display:inline-block; padding:4px 14px; border-radius:20px;">FAIRY TALE TRAVEL BOOK</div>
+            <div class="cover-illu" onclick="playPop()">${activeTheme.symbol !== 'none' ? activeTheme.symbol : '📖'}</div>
+            <h1 class="cover-title">童話漫遊手帳</h1>
+          </div>
+          <div class="cover-card">
+            <strong style="color:var(--primary-deep);">✈️ 航班與出行備忘</strong><br/>
+            ${data.flightInfo || '點擊上方「編輯行程」即可更換行程資料'}
+          </div>
+          <p style="font-size:0.72rem; opacity:0.85;">（向左滑動翻閱，點擊行程可蓋章完成）</p>
+        </div>
+      `;
+      book.innerHTML += coverHtml;
+
+      // 內頁
+      data.days.forEach((day, index) => {
+        let z = totalPagesCount - (index + 1);
+        let eventsHtml = day.events.map(ev => {
+          let naverSearchUrl = `https://map.naver.com/v5/search/${encodeURIComponent(ev.title)}`;
+          return `
+            <div class="story-card" onclick="this.classList.toggle('completed'); playPop();">
+              <div class="card-top">
+                <span class="badge-time">${ev.time}</span>
+                <span class="card-headline">${ev.title}</span>
+                <a class="map-btn" href="${naverSearchUrl}" target="_blank" onclick="event.stopPropagation()">🧭 Naver</a>
+              </div>
+              ${ev.desc ? `<div class="card-text">${ev.desc}</div>` : ''}
+            </div>
+          `;
+        }).join('');
+
+        let hotelHtml = day.hotel ? `
+          <div class="hotel-banner">
+            <span>🏡 住宿：${day.hotel}</span>
+            <a class="map-btn" href="https://map.naver.com/v5/search/${encodeURIComponent(day.hotel)}" target="_blank" onclick="event.stopPropagation()">🧭 Naver</a>
+          </div>
+        ` : '';
+
+        let pageHtml = `
+          <div class="page" style="z-index: ${z};">
+            <div class="page-scroll">
+              <div class="chapter-tag">CHAPTER 0${index + 1}</div>
+              <h2 class="chapter-header">${day.title}</h2>
+              ${hotelHtml}
+              <div class="timeline-stack">
+                ${eventsHtml}
+              </div>
+              ${day.snack ? `
+                <div style="margin-top:14px; background:var(--primary-soft); border:1.5px dashed var(--border-color); border-radius:12px; padding:10px;">
+                  <strong style="font-size:0.78rem; color:var(--primary-deep);">🍴 宵夜精選</strong>
+                  <div style="font-size:0.76rem; margin-top:4px;">${day.snack}</div>
+                </div>
+              ` : ''}
+            </div>
+            <div class="page-tail">
+              <span>Day ${index + 1}</span>
+              <span>第 ${index + 1} 頁</span>
+            </div>
+          </div>
+        `;
+        book.innerHTML += pageHtml;
+      });
+
+      currentPage = 0;
+      pages = document.querySelectorAll('.page');
+      totalPages = pages.length;
+      updateControls();
+    }
+
+    function updateControls() {
+      document.getElementById('prevBtn').disabled = (currentPage === 0);
+      document.getElementById('nextBtn').disabled = (currentPage >= totalPages - 1);
+    }
+
+    function nextPage() {
+      if (currentPage < totalPages - 1) {
+        playFlip();
+        pages[currentPage].classList.add('flipped');
+        currentPage++;
+        updateControls();
+      }
+    }
+
+    function prevPage() {
+      if (currentPage > 0) {
+        playFlip();
+        currentPage--;
+        pages[currentPage].classList.remove('flipped');
+        updateControls();
+      }
+    }
+
+    // 觸控滑動支援
+    let startX = 0;
+    const wrapper = document.getElementById('storyWrapper');
+    wrapper.addEventListener('touchstart', e => { startX = e.touches[0].clientX; }, { passive: true });
+    wrapper.addEventListener('touchend', e => {
+      const diff = e.changedTouches[0].clientX - startX;
+      if (Math.abs(diff) > 45) {
+        if (diff < 0) nextPage();
+        else prevPage();
+      }
+    }, { passive: true });
+
+    // 主題套用引擎
+    function applyTheme(t) {
+      activeTheme = { ...t };
+      const root = document.documentElement;
+      root.style.setProperty('--primary', t.primary);
+      root.style.setProperty('--primary-deep', t.primaryDeep);
+      root.style.setProperty('--primary-soft', t.primarySoft);
+      root.style.setProperty('--paper-bg', t.paperBg);
+      root.style.setProperty('--border-color', t.borderColor);
+      root.style.setProperty('--app-bg-1', t.bg1);
+      root.style.setProperty('--app-bg-2', t.bg2);
+      root.style.setProperty('--floating-symbol', `"${t.symbol}"`);
+      document.getElementById('floatingSymbolSelect').value = t.symbol;
+      document.getElementById('themeColorPick').value = t.primary;
+
+      // 重新渲染畫面保留目前內容
+      const text = document.getElementById('rawTextInput').value.trim() || DEFAULT_DATA;
+      renderBook(parseItinerary(text));
+    }
+
+    function selectPreset(name) {
+      if (PRESETS[name]) {
+        applyTheme(PRESETS[name]);
+      }
+    }
+
+    function updateCustomColors() {
+      const col = document.getElementById('themeColorPick').value;
+      activeTheme.primary = col;
+      activeTheme.primaryDeep = col;
+      activeTheme.primarySoft = col + "1A"; // 10% 透明度
+      applyTheme(activeTheme);
+    }
+
+    function updateFloatingSymbol() {
+      activeTheme.symbol = document.getElementById('floatingSymbolSelect').value;
+      applyTheme(activeTheme);
+    }
+
+    function saveThemeSettings() {
+      localStorage.setItem('saved_theme', JSON.stringify(activeTheme));
+      closeThemeModal();
+    }
+
+    // Modal 邏輯
+    function openPlanModal() { document.getElementById('planModal').style.display = 'flex'; }
+    function closePlanModal() { document.getElementById('planModal').style.display = 'none'; }
+    function openThemeModal() { document.getElementById('themeModal').style.display = 'flex'; }
+    function closeThemeModal() { document.getElementById('themeModal').style.display = 'none'; }
+
+    function applyPlanText() {
+      const text = document.getElementById('rawTextInput').value.trim();
+      if (!text) { alert('請貼上行程文字！'); return; }
+      localStorage.setItem('saved_trip_text', text);
+      renderBook(parseItinerary(text));
+      closePlanModal();
+    }
+
+    // 漂浮粒子動效 Canvas
+    const canvas = document.getElementById('effectCanvas');
+    const ctx = canvas.getContext('2d');
+    let w, h;
+    function resize() { w = canvas.width = window.innerWidth; h = canvas.height = window.innerHeight; }
+    window.addEventListener('resize', resize);
+    resize();
+
+    const particles = Array.from({ length: 14 }, () => ({
+      x: Math.random() * w,
+      y: Math.random() * h,
+      size: 14 + Math.random() * 12,
+      spY: 0.6 + Math.random() * 0.8,
+      rot: Math.random() * 6.28
+    }));
+
+    function anim() {
+      ctx.clearRect(0, 0, w, h);
+      if (activeTheme.symbol !== 'none') {
+        particles.forEach(p => {
+          p.y += p.spY;
+          p.rot += 0.01;
+          if (p.y > h + 30) p.y = -20;
+          ctx.save();
+          ctx.translate(p.x, p.y);
+          ctx.rotate(p.rot);
+          ctx.font = `${p.size}px sans-serif`;
+          ctx.textAlign = 'center';
+          ctx.fillText(activeTheme.symbol, 0, 0);
+          ctx.restore();
+        });
+      }
+      requestAnimationFrame(anim);
+    }
+    anim();
+
+    // 載入儲存資料
+    window.addEventListener('DOMContentLoaded', () => {
+      const savedTheme = localStorage.getItem('saved_theme');
+      if (savedTheme) {
+        try { activeTheme = JSON.parse(savedTheme); } catch(e){}
+      }
+      applyTheme(activeTheme);
+
+      const cachedPlan = localStorage.getItem('saved_trip_text') || DEFAULT_DATA;
+      document.getElementById('rawTextInput').value = cachedPlan;
+      renderBook(parseItinerary(cachedPlan));
+    });
+  </script>
+</body>
+</html>
