@@ -36,6 +36,41 @@
     .view-container { flex: 1; width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; z-index: 2; overflow: hidden; }
     .view-panel { display: none; width: 100%; height: 100%; }
     .view-panel.active { display: flex; flex-direction: column; align-items: center; justify-content: center; }
+
+    /* 天數分頁快捷標籤列 */
+    .day-tabs-bar {
+      width: min(92vw, 420px);
+      display: flex;
+      gap: 6px;
+      overflow-x: auto;
+      padding: 2px 2px 8px 2px;
+      scrollbar-width: none;
+      -webkit-overflow-scrolling: touch;
+      margin-bottom: 2px;
+    }
+    .day-tabs-bar::-webkit-scrollbar { display: none; }
+    .day-tab-pill {
+      background: rgba(255, 255, 255, 0.85);
+      border: 1.5px solid var(--border-color);
+      border-radius: 14px;
+      padding: 4px 12px;
+      font-size: 0.74rem;
+      font-weight: 800;
+      color: var(--ink-muted);
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s ease;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+      flex-shrink: 0;
+    }
+    .day-tab-pill.active {
+      background: var(--primary);
+      color: #FFFFFF;
+      border-color: var(--primary);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+      transform: translateY(-1px);
+    }
+
     .storybook-wrapper { position: relative; width: min(92vw, 420px); height: min(78vh, 700px); perspective: 1800px; }
     .storybook { position: relative; width: 100%; height: 100%; transform-style: preserve-3d; border-radius: 24px; box-shadow: 0 20px 40px rgba(0,0,0,0.12); }
     .page { position: absolute; width: 100%; height: 100%; top: 0; right: 0; background-color: var(--paper-bg); border-radius: 12px 24px 24px 12px; border: 3px solid var(--border-color); padding: 18px 16px 14px 18px; display: flex; flex-direction: column; transform-origin: left center; transform-style: preserve-3d; transition: transform 0.75s cubic-bezier(0.25, 1, 0.35, 1); box-shadow: inset 18px 0 25px -12px rgba(0,0,0,0.08); overflow: hidden; }
@@ -145,6 +180,8 @@
 
   <div class="view-container">
     <div class="view-panel active" id="bookView">
+      <!-- 🗓️ 天數分頁導航列 -->
+      <div class="day-tabs-bar" id="dayTabsBar"></div>
       <div class="storybook-wrapper" id="storyWrapper">
         <div class="storybook" id="storybook"></div>
       </div>
@@ -921,12 +958,45 @@ Day 1｜海風與芒草
       currentPage = 0;
       pages = document.querySelectorAll('.page');
       totalPages = pages.length;
+
+      // 產生天數分頁導航標籤
+      const dayTabsBar = document.getElementById('dayTabsBar');
+      if (dayTabsBar) {
+        let tabsHtml = `<button class="day-tab-pill active" onclick="goToPage(0)">📖 封面</button>`;
+        data.days.forEach((day, idx) => {
+          tabsHtml += `<button class="day-tab-pill" onclick="goToPage(${idx + 1})">Day ${idx + 1}</button>`;
+        });
+        dayTabsBar.innerHTML = tabsHtml;
+      }
+
+      updateControls();
+    }
+
+    function goToPage(targetIdx) {
+      if (targetIdx < 0 || targetIdx >= totalPages) return;
+      playFlip();
+      pages.forEach((p, idx) => {
+        if (idx < targetIdx) {
+          p.classList.add('flipped');
+        } else {
+          p.classList.remove('flipped');
+        }
+      });
+      currentPage = targetIdx;
       updateControls();
     }
 
     function updateControls() {
       document.getElementById('prevBtn').disabled = (currentPage === 0);
       document.getElementById('nextBtn').disabled = (currentPage >= totalPages - 1);
+      
+      const pills = document.querySelectorAll('.day-tab-pill');
+      pills.forEach((pill, idx) => {
+        pill.classList.toggle('active', idx === currentPage);
+      });
+      if (pills[currentPage]) {
+        pills[currentPage].scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+      }
     }
     function nextPage() {
       if (currentPage < totalPages - 1) {
@@ -970,7 +1040,7 @@ Day 1｜海風與芒草
         closePlanModal();
         currentPage = 0;
         updateControls();
-        setTimeout(() => { nextPage(); }, 200);
+        setTimeout(() => { if (totalPages > 1) goToPage(1); }, 250);
       } catch(err) {
         console.error(err);
         alert('生成繪本失敗：' + err.message);
@@ -989,6 +1059,7 @@ Day 1｜海風與芒草
         p.y += p.spY; p.rot += 0.01;
         if (p.y > h + 30) p.y = -20;
         ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.rot); ctx.font = `${p.size}px sans-serif`; ctx.textAlign = 'center';
+        ctx.fillText((THEMES[currentThemeKey] || THEMES.orange).textAlign = 'center';
         ctx.fillText((THEMES[currentThemeKey] || THEMES.orange).symbol, 0, 0);
         ctx.restore();
       });
