@@ -248,13 +248,7 @@
         <label style="font-size:0.72rem; font-weight:800; color:var(--ink-muted); display:block; margin-bottom:4px;">🎨 搭配風格：</label>
         <div id="quickThemeRow" style="display:flex; gap:8px; overflow-x:auto; padding-bottom:4px;"></div>
       </div>
-      <textarea id="rawTextInput" style="min-height: 180px;" placeholder="在此貼入任意行程文字...
-支援任意格式：
-Day 1｜啟程
-住宿：神話世界
-10:00 彩虹海岸道路
-12:00 涯月咖啡街
-14:00 981賽車"></textarea>
+      <textarea id="rawTextInput" style="min-height: 180px;" placeholder="在此貼入任意行程文字..."></textarea>
       <div class="modal-actions">
         <button class="close-btn" onclick="closePlanModal()">取消</button>
         <button class="submit-btn" onclick="applyPlanText()">✨ 生成繪本</button>
@@ -445,32 +439,69 @@ Day 1｜啟程
     }
 
     const MY_TRIP_DATA = `✈️ 航班與住宿資訊備忘
-去程：2026/09/12 虎航 IT632 07:00 台北 ➔ 10:00 濟州 (代碼: R3R7YY)
-回程：2026/09/16 虎航 IT655 10:30 濟州 ➔ 11:35 台北
-
-9/12（六）Day 1｜彩虹道路 ➔ 涯月拍貼 ➔ 981重力賽車
+航班資訊：
+去程：2026/09/12（六）台灣虎航 IT632 ｜ 07:00 台北 ➔ 10:00 濟州（訂位代號：R3R7YY）
+回程：2026/09/16（三）台灣虎航 IT655 ｜ 10:30 濟州 ➔ 11:35 台北
+飯店安排：
+09/12–09/14（2 晚）：濟州神話世界（JEJU SHINHWA WORLD SHINHWA Resort）
+09/14–09/16（2 晚）：Hotel RegentMarine The Blue（麗晶濱海藍色酒店）
+📅 濟州島五天四夜每日完整時間行程
+9/12（六）Day 1｜彩虹道路 ➔ 涯月拍貼 ➔ 981重力賽車 ➔ 神話度假村
 住宿：濟州神話世界
-10:00–11:00｜抵達與取車：降落機場出關，搭接駁車取車。
-11:00–11:30｜道頭洞彩虹海岸道路：彩色石墩拍照散步。
-11:30–12:30｜Haru Film 涯月店：粉藍海景拍貼機、吃冰淇淋。
-14:15–16:15｜9.81 Park 重力賽車：重力競速與科技遊樂設施。
-16:45–19:30｜神話度假村設施暢玩：Check-in 放行李、玩水。
-21:30 之後｜宵夜：BHC 炸雞配生啤酒。
-
-9/13（日）Day 2｜西歸浦自然奇景 ➔ 親子休閒 ➔ 綠茶館
+10:00–11:00｜抵達與取車：降落濟州機場、通關入境、提領行李，搭接駁車至租車行辦妥手續取車。
+11:00–11:30｜道頭洞彩虹海岸道路：彩色石墩拍照散步打卡。
+11:30–12:30｜Haru Film 涯月店（一天膠捲 AEWOL）：拍經典粉藍海景拍貼機、吃雲朵冰淇淋與打卡看海。
+12:30–13:45｜午餐：涯月周邊享用黑豬肉料理或鮮甜海膽蓋飯。
+13:45–14:15｜海邊咖啡＋車程緩衝：外帶海邊咖啡看海，開車往 981 移動（預留午後塞車緩衝）。
+14:15–16:15｜9.81 Park 重力賽車公園：無動力競速賽車體驗、室內科技與運動娛樂設施。
+16:15–16:45｜車程移動：往西南神話世界前進（預留午後車多路段時間）。
+16:45–19:30｜神話度假村設施暢玩：辦理 Check-in 放行李，使用主題樂園一人 3 項券，並前往神話水上樂園玩水。
+19:30–21:00｜晚餐：濟州整尾烤/燉白帶魚名店（自由參加）。
+21:30 之後｜宵夜：BHC 炸雞（度假村商圈外帶或外送）配啤酒。
+9/13（日）Day 2｜西歸浦自然奇景 ➔ 親子休閒 ➔ 綠茶博物館／水樂園
 住宿：濟州神話世界
-10:00–12:00｜Arte Kids Park：西南部大型互動科技樂園。
-12:30–14:00｜午餐：濟州炭烤活鰻魚料理。
-14:00–16:30｜西歸浦順遊：柱狀節理帶、正房瀑布、偶來市場。
-16:30–18:30｜雪綠茶博物館：Innisfree 綠茶冰淇淋。
+08:30–09:30｜早餐：飯店內用或周邊自理。
+10:00–12:00｜Arte Kids Park：西南部超大型沉浸式科技互動樂園。
+12:30–14:00｜午餐：濟州烤鰻魚料理。
+14:00–16:30｜西歸浦順遊（彈性調配）：
+大浦海岸柱狀節理帶（壯觀火山玄武岩海景）
+正房瀑布（直落入海的天然瀑布）
+西歸浦每日偶來市場（必吃打卡：兔子飯捲、黑豬肉餃子、老奶奶橘子麻糬）
+16:30–18:30｜午後休閒：
+選擇 A：前往雪綠茶博物館（Innisfree 綠茶冰淇淋、甜點，車程僅 10 分鐘）。
+選擇 B：返回度假村水上樂園一路暢玩到打烊。
+19:00–21:00｜晚餐：濟州頂級韓牛燒肉。
 21:30 之後｜宵夜：韓式炸醬麵＋酥脆糖醋肉。
-
-9/14（一）Day 3｜換飯店 ➔ 鮑魚粥 ➔ 藍瓶咖啡 ➔ 東部海景
+9/14（一）Day 3｜換飯店 ➔ 鮑魚粥 ➔ 藍瓶咖啡 ➔ 東部海景 ➔ 市區逛街採買
 住宿：Hotel RegentMarine The Blue
-10:30–11:45｜早午餐：濟州濃郁鮑魚粥。
-12:00–13:00｜藍瓶咖啡：手沖咖啡與濟州限定特調打卡。
-13:30–15:15｜月汀里海灘：果凍海漫步、海邊放空。
-18:00–20:30｜市區購物：東門市場、七星街與樂天超市。`;
+09:00–10:00｜睡到飽自然醒：悠閒整理行李、辦理退房，開車往東北出發。
+10:30–11:45｜早午餐：濟州在地濃郁鮑魚粥。
+12:00–13:00｜藍瓶咖啡（Blue Bottle 濟州店）：享用手沖咖啡、濟州限定特調與周邊商品打卡。
+13:30–15:15｜東部海灘悠閒漫遊：月汀里海灘 或 咸德海水浴場（欣賞果凍海、踩水散步、海邊放空）。
+15:30–16:45｜下午點心/正餐：細花排骨（濃郁招牌燉牛排骨）。
+16:45–17:45｜車程回市區：抵達 Hotel RegentMarine The Blue 辦理 Check-in 放行李。
+18:00–20:30｜市區購物巡禮：
+步行可達：東門市場、七星街商圈。
+開車可達：樂天超市（伴手禮補貨）、新羅/樂天免稅店、蓮洞商圈。
+20:30–21:30｜晚餐：飯店沙拉輕食（或自由選擇：市區熱門烤牛腸）。
+22:00 之後｜宵夜：Baro 豬腳（바르고 족발）＋ 獵奇辣炒年糕。
+9/15（二）Day 4｜牛島跳島 ➔ 城山日出峰 ➔ 倫敦貝果 ➔ 市區最後採購
+住宿：Hotel RegentMarine The Blue
+08:00–09:00｜早餐：東門市場或市區在地豬肉湯麵。
+09:00–10:00｜開車前往城山港：填寫乘船申告書、購票登船前往牛島。
+10:30–12:30｜牛島跳島遊：租電動車環島、西濱白沙海灘打卡、品嚐花生冰淇淋與海景咖啡。
+12:30–13:30｜午餐：享用濟州在地濃郁豬肉湯。
+14:00–15:15｜城山日出峰：搭船返回本島，城山日出峰海邊步道散步、拍照賞景。
+15:30–16:45｜London Bagel Museum Jeju（倫敦貝果博物館 濟州店）：品嚐招牌手工貝果、特色奶油乳酪與外帶海景咖啡。
+17:30–19:30｜返回市區最後補貨：七星街、東門市場或樂天超市/免稅店最後採買。
+19:30–21:00｜晚餐：豚笑（熟成黑豬肉燒肉）或飯店周邊海鮮/烤肉店。
+21:30 之後｜宵夜：韓式香脆炸雞（橋村外送或在地炸雞店）。
+9/16（三）Day 5｜早餐 ➔ 加油還車 ➔ 機場返台
+07:00–07:45｜退房與早餐：辦理退房，前往市區購買 Egg Drop 人氣吐司（外帶車上享用）。
+07:45–08:15｜加油與還車：前往加油站將油箱加滿，抵達租車公司驗車還車。
+08:15–08:35｜接駁接送：搭乘租車公司免費接駁車抵達濟州國際機場。
+08:35–10:30｜報到出境：虎航櫃檯託運行李、退稅辦理、通關安檢、最後免稅提貨與登機。
+10:30–11:35｜搭乘台灣虎航 IT655 返抵台灣。`;
 
     const OTHER_USER_TRIP = `✈️ 濟州東線深度文青遊
 住宿：月汀里海景民宿
@@ -795,7 +826,7 @@ Day 1｜海風與芒草
     }
 
     // ==========================================
-    // 🧠 智慧行程高容錯解析引擎
+    // 🧠 智慧行程高容錯解析引擎（完美相容版）
     // ==========================================
     function parseItinerary(rawText) {
       if (!rawText) return { flightInfo: "", days: [], isKorea: true };
@@ -806,36 +837,54 @@ Day 1｜海風與芒草
       const isKorea = /濟州|首爾|釜山|弘大|明洞|東大門|西歸浦|南怡島|大邱|韓國|korea|jeju|seoul|busan/i.test(rawText);
 
       const isDayHeader = (line) => {
-        if (/住宿[：:]/i.test(line)) return false;
-        if (/^(去程|回程|航班|代碼|機票|備忘)/i.test(line)) return false;
-        if (/^\d{1,2}:\d{2}/.test(line)) return false;
-        return /^(?:#+\s*)?(?:【?\s*(?:Day\s*\d+|D\d+|第\s*[一二三四五六七八九十\d]+\s*天|\d{1,2}\s*[\/\.-]\s*\d{1,2}(?:\s*[（(][^）)]+[）)])?|\d{4}[\/\.-]\d{1,2}[\/\.-]\d{1,2})\s*】?)/i.test(line)
-            || /(Day\s*\d+|第\s*\d+\s*天|\bD\d+\b)/i.test(line);
+        // 優先度 1: 明確 Day 標記（如 Day 1, Day 01, 第 1 天, D1 等），就算包含「換飯店」也正確判定為天數
+        if (/(?:Day\s*\d+|第\s*[一二三四五六七八九十\d]+\s*天|\bD\d+\b)/i.test(line)) {
+          return true;
+        }
+        // 優先度 2: 行首為單一日期（排除 09/12-09/14 這種住宿晚數區間）
+        const singleDateMatch = line.match(/^(\d{4}[\/\.-])?\d{1,2}[\/\.-]\d{1,2}(?:[（(][^）)]+[）)])?/);
+        if (singleDateMatch) {
+          const after = line.substring(singleDateMatch[0].length).trim();
+          if (/^[-–~至到]\s*\d{1,2}/.test(after)) return false; // 排除日期區間
+          if (/晚|宿|hotel/i.test(line) && !/day/i.test(line)) return false; // 排除住宿晚數
+          return true;
+        }
+        return false;
       };
 
-      const hotelRegex = /(?:住宿|飯店|酒店|民宿|Hotel|Stay|宿)[：:]\s*(.*)/i;
-      const flightRegex = /(?:去程|回程|航班|代碼|機票|班機|備忘)[：:]?\s*(.*)/i;
+      const hotelRegex = /^(?:住宿|飯店|酒店|民宿|Hotel|Stay|宿)[：:]\s*(.*)/i;
       const timeRegex = /^([0-2]?\d:[0-5]\d(?:\s*[-–~至到]\s*[0-2]?\d:[0-5]\d)?(?:\s*之後)?|[上下]午(?:\s*[0-2]?\d點)?|清晨|早晨|中午|傍晚|晚上|深夜|宵夜|早餐|早午餐|午餐|晚餐)/;
-      const bulletRegex = /^(\d+[\.,、\)]|[\-\*\•\▪])\s*/;
+      const bulletRegex = /^(\d+[\.,、\)]|[\-\*\•\▪]|選擇\s*[A-Za-z\d][：:])\s*/;
+
+      const hasAnyDayHeader = lines.some(l => isDayHeader(l));
 
       lines.forEach(line => {
-        if (hotelRegex.test(line)) {
-          const h = line.match(hotelRegex)[1].trim();
-          if (currentDay) currentDay.hotel = h;
-          else flightInfo += '🏡 住宿：' + h + '<br/>';
-          return;
-        }
-        if (flightRegex.test(line) && !currentDay) {
-          flightInfo += line + '<br/>';
-          return;
-        }
+        // 1. 天數標題判定（最高優先級）
         if (isDayHeader(line)) {
           if (currentDay) days.push(currentDay);
           currentDay = { title: line.replace(/^#+\s*/, ''), hotel: '', events: [] };
           return;
         }
-        if (!currentDay) currentDay = { title: "Day 1｜旅程啟程", hotel: '', events: [] };
 
+        // 2. 住宿判定
+        if (hotelRegex.test(line)) {
+          const h = line.replace(hotelRegex, '$1').trim();
+          if (currentDay) currentDay.hotel = h;
+          else flightInfo += '🏡 住宿：' + h + '<br/>';
+          return;
+        }
+
+        // 3. 在尚未到達 Day 1 之前的資訊，全部歸入封面備忘卡片
+        if (!currentDay) {
+          if (hasAnyDayHeader) {
+            flightInfo += line + '<br/>';
+            return;
+          } else {
+            currentDay = { title: "Day 1｜自訂行程", hotel: '', events: [] };
+          }
+        }
+
+        // 4. 行程項目解析
         let time = "隨時", rest = line;
         const tMatch = rest.match(timeRegex);
         if (tMatch) {
@@ -844,10 +893,11 @@ Day 1｜海風與芒草
         } else {
           const bMatch = rest.match(bulletRegex);
           if (bMatch) {
-            time = "行程";
+            time = bMatch[0].replace(/[：:\s]+$/, '').trim();
             rest = rest.substring(bMatch[0].length).trim();
           }
         }
+
         let title = rest, desc = '';
         if (rest.includes('：') || rest.includes(':')) {
           const parts = rest.split(/[：:]/);
@@ -858,8 +908,10 @@ Day 1｜海風與芒草
           title = parts[0].trim();
           desc = parts.slice(1).join(' ').trim();
         }
+
         if (title) currentDay.events.push({ time, title, desc });
       });
+
       if (currentDay) days.push(currentDay);
       return { flightInfo, days, isKorea };
     }
@@ -1038,8 +1090,7 @@ Day 1｜海風與芒草
         const parsed = parseItinerary(text);
         await renderBook(parsed);
         closePlanModal();
-        currentPage = 0;
-        updateControls();
+        goToPage(0);
         setTimeout(() => { if (totalPages > 1) goToPage(1); }, 250);
       } catch(err) {
         console.error(err);
