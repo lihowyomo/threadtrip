@@ -122,7 +122,6 @@
     .theme-card.active { border-color: var(--primary); background: var(--primary-soft); box-shadow: 0 4px 10px rgba(0,0,0,0.08); }
     .theme-dot { width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1rem; box-shadow: 0 2px 5px rgba(0,0,0,0.15); flex-shrink: 0; }
     
-    /* 隱私設定卡片 */
     .privacy-option { background: #fff; border: 2px solid #EFE5DB; border-radius: 14px; padding: 12px; margin-bottom: 8px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; transition: 0.2s; }
     .privacy-option.active { border-color: var(--primary); background: var(--primary-soft); }
     .privacy-text { display: flex; flex-direction: column; gap: 2px; }
@@ -336,45 +335,75 @@ Day 1｜啟程
 
     function initDB() {
       return new Promise((resolve) => {
-        const req = indexedDB.open("TravelThreadsDB", 2);
-        req.onupgradeneeded = (e) => {
-          const d = e.target.result;
-          if (!d.objectStoreNames.contains("posts")) d.createObjectStore("posts", { keyPath: "id" });
-          if (!d.objectStoreNames.contains("polaroids")) d.createObjectStore("polaroids", { keyPath: "dayIndex" });
-        };
-        req.onsuccess = (e) => { db = e.target.result; resolve(db); };
+        try {
+          const req = indexedDB.open("TravelThreadsDB", 3);
+          req.onupgradeneeded = (e) => {
+            const d = e.target.result;
+            if (!d.objectStoreNames.contains("posts")) d.createObjectStore("posts", { keyPath: "id" });
+            if (!d.objectStoreNames.contains("polaroids")) d.createObjectStore("polaroids", { keyPath: "dayIndex" });
+          };
+          req.onsuccess = (e) => { db = e.target.result; resolve(db); };
+          req.onerror = () => resolve(null);
+        } catch(e) { resolve(null); }
       });
     }
-    function savePostToDB(post) { db.transaction(["posts"], "readwrite").objectStore("posts").put(post); }
+    function savePostToDB(post) {
+      try {
+        if (!db) return;
+        db.transaction(["posts"], "readwrite").objectStore("posts").put(post);
+      } catch(e){}
+    }
     function getAllPostsFromDB() {
       return new Promise((resolve) => {
-        const req = db.transaction(["posts"], "readonly").objectStore("posts").getAll();
-        req.onsuccess = () => resolve(req.result || []);
+        try {
+          if (!db || !db.objectStoreNames.contains("posts")) { resolve([]); return; }
+          const req = db.transaction(["posts"], "readonly").objectStore("posts").getAll();
+          req.onsuccess = () => resolve(req.result || []);
+          req.onerror = () => resolve([]);
+        } catch(e) { resolve([]); }
       });
     }
 
     function savePolaroidToDB(dayIndex, imgData, caption) {
       return new Promise((resolve) => {
-        const tx = db.transaction(["polaroids"], "readwrite");
-        tx.objectStore("polaroids").put({ dayIndex, imgData, caption });
-        tx.oncomplete = () => resolve();
+        try {
+          if (!db || !db.objectStoreNames || !db.objectStoreNames.contains("polaroids")) { resolve(); return; }
+          const tx = db.transaction(["polaroids"], "readwrite");
+          tx.objectStore("polaroids").put({ dayIndex, imgData, caption });
+          tx.oncomplete = () => resolve();
+          tx.onerror = () => resolve();
+        } catch(e) { resolve(); }
       });
     }
     function deletePolaroidFromDB(dayIndex) {
       return new Promise((resolve) => {
-        const tx = db.transaction(["polaroids"], "readwrite");
-        tx.objectStore("polaroids").delete(dayIndex);
-        tx.oncomplete = () => resolve();
+        try {
+          if (!db || !db.objectStoreNames || !db.objectStoreNames.contains("polaroids")) { resolve(); return; }
+          const tx = db.transaction(["polaroids"], "readwrite");
+          tx.objectStore("polaroids").delete(dayIndex);
+          tx.oncomplete = () => resolve();
+          tx.onerror = () => resolve();
+        } catch(e) { resolve(); }
       });
     }
     function getAllPolaroidsFromDB() {
       return new Promise((resolve) => {
-        const req = db.transaction(["polaroids"], "readonly").objectStore("polaroids").getAll();
-        req.onsuccess = () => {
-          const map = {};
-          (req.result || []).forEach(item => { map[item.dayIndex] = item; });
-          resolve(map);
-        };
+        try {
+          if (!db || !db.objectStoreNames || !db.objectStoreNames.contains("polaroids")) {
+            resolve({});
+            return;
+          }
+          const tx = db.transaction(["polaroids"], "readonly");
+          const req = tx.objectStore("polaroids").getAll();
+          req.onsuccess = () => {
+            const map = {};
+            (req.result || []).forEach(item => { map[item.dayIndex] = item; });
+            resolve(map);
+          };
+          req.onerror = () => resolve({});
+        } catch(e) {
+          resolve({});
+        }
       });
     }
 
@@ -733,7 +762,7 @@ Day 1｜海風與芒草
     // ==========================================
     function parseItinerary(rawText) {
       if (!rawText) return { flightInfo: "", days: [], isKorea: true };
-      const lines = rawText.split('\n').map(l => l.trim()).filter(l => l);
+      const lines = rawText.split(/[\r\n]+/).map(l => l.trim()).filter(l => l);
       let flightInfo = "";
       const days = [];
       let currentDay = null;
@@ -741,16 +770,16 @@ Day 1｜海風與芒草
 
       const isDayHeader = (line) => {
         if (/住宿[：:]/i.test(line)) return false;
-        if (/^(去程|回程|航班|代碼|機票)/i.test(line)) return false;
+        if (/^(去程|回程|航班|代碼|機票|備忘)/i.test(line)) return false;
         if (/^\d{1,2}:\d{2}/.test(line)) return false;
         return /^(?:#+\s*)?(?:【?\s*(?:Day\s*\d+|D\d+|第\s*[一二三四五六七八九十\d]+\s*天|\d{1,2}\s*[\/\.-]\s*\d{1,2}(?:\s*[（(][^）)]+[）)])?|\d{4}[\/\.-]\d{1,2}[\/\.-]\d{1,2})\s*】?)/i.test(line)
-            || /(Day\s*\d+|第\s*\d+\s*天)/i.test(line);
+            || /(Day\s*\d+|第\s*\d+\s*天|\bD\d+\b)/i.test(line);
       };
 
       const hotelRegex = /(?:住宿|飯店|酒店|民宿|Hotel|Stay|宿)[：:]\s*(.*)/i;
-      const flightRegex = /(?:去程|回程|航班|代碼|機票|班機)[：:]?\s*(.*)/i;
-      const timeRegex = /^([0-2]?\d:[0-5]\d(?:\\s*[-–~至到]\s*[0-2]?\d:[0-5]\d)?(?:\s*之後)?|[上下]午(?:\s*[0-2]?\d點)?|清晨|早晨|中午|傍晚|晚上|深夜|宵夜|早餐|早午餐|午餐|晚餐)/;
-      const bulletRegex = /^(\d+[\.,、\)]|[\-\-\•\▪])\s*/;
+      const flightRegex = /(?:去程|回程|航班|代碼|機票|班機|備忘)[：:]?\s*(.*)/i;
+      const timeRegex = /^([0-2]?\d:[0-5]\d(?:\s*[-–~至到]\s*[0-2]?\d:[0-5]\d)?(?:\s*之後)?|[上下]午(?:\s*[0-2]?\d點)?|清晨|早晨|中午|傍晚|晚上|深夜|宵夜|早餐|早午餐|午餐|晚餐)/;
+      const bulletRegex = /^(\d+[\.,、\)]|[\-\*\•\▪])\s*/;
 
       lines.forEach(line => {
         if (hotelRegex.test(line)) {
@@ -851,8 +880,8 @@ Day 1｜海風與芒草
           <div class="hotel-banner">
             <span>🏡 住宿：${day.hotel}</span>
             <div class="map-btn-group">
-              ${data.isKorea ? `<a class="map-btn naver" href="https://map.naver.com/v5/search/${encodeURIComponent(day.hotel)}" target="_blank" onclick="event.stopPropagation()">🧭 Naver</a>` : ''}
-              <a class="map-btn google" href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(day.hotel)}" target="_blank" onclick="event.stopPropagation()">🗺️ Google</a>
+              ${data.isKorea ? `<a class="map-btn naver" href="${naverUrl}" target="_blank" onclick="event.stopPropagation()">🧭 Naver</a>` : ''}
+              <a class="map-btn google" href="${googleUrl}" target="_blank" onclick="event.stopPropagation()">🗺️ Google</a>
             </div>
           </div>
         ` : '';
@@ -926,14 +955,26 @@ Day 1｜海風與芒草
 
     function openPlanModal() { renderThemePickers(); document.getElementById('planModal').style.display = 'flex'; }
     function closePlanModal() { document.getElementById('planModal').style.display = 'none'; }
-    function applyPlanText() {
-      const text = document.getElementById('rawTextInput').value.trim();
-      if (!text) return;
-      playPop();
-      localStorage.setItem('saved_trip_text', text);
-      renderBook(parseItinerary(text));
-      closePlanModal();
-      setTimeout(() => { nextPage(); }, 250);
+    
+    async function applyPlanText() {
+      try {
+        const text = document.getElementById('rawTextInput').value.trim();
+        if (!text) {
+          alert('請先貼入行程文字內容！');
+          return;
+        }
+        playPop();
+        localStorage.setItem('saved_trip_text', text);
+        const parsed = parseItinerary(text);
+        await renderBook(parsed);
+        closePlanModal();
+        currentPage = 0;
+        updateControls();
+        setTimeout(() => { nextPage(); }, 200);
+      } catch(err) {
+        console.error(err);
+        alert('生成繪本失敗：' + err.message);
+      }
     }
 
     const canvas = document.getElementById('effectCanvas'), ctx = canvas.getContext('2d');
