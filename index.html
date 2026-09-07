@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-  <title>童話漫遊繪本 🍊 Threads 社群版</title>
+  <title>童話漫遊繪本 🎨 多風格社群版</title>
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
   <meta name="theme-color" content="#FF7E36" />
@@ -20,8 +20,6 @@
       --ink-muted: #7D6F69;
       --naver-green: #03C75A;
       --naver-bg: #E8F8EE;
-      --google-blue: #4285F4;
-      --google-bg: #EEF4FD;
       --floating-symbol: "🍊";
       --app-bg-1: #FFF4E5;
       --app-bg-2: #F5E5D3;
@@ -58,6 +56,64 @@
       height: 100%;
       pointer-events: none;
       z-index: 1;
+    }
+
+    /* 主題切換彈窗與色票卡片 */
+    .theme-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+    }
+
+    .theme-card {
+      background: #FFFFFF;
+      border: 2px solid #EFE5DB;
+      border-radius: 14px;
+      padding: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .theme-card.active {
+      border-color: var(--primary);
+      background: var(--primary-soft);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+      transform: scale(1.02);
+    }
+
+    .theme-dot {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+      flex-shrink: 0;
+    }
+
+    .theme-info {
+      display: flex;
+      flex-direction: column;
+      text-align: left;
+    }
+    .theme-name {
+      font-size: 0.8rem;
+      font-weight: 800;
+      color: var(--ink);
+    }
+
+    .map-btn-group {
+      display: flex;
+      gap: 4px;
+    }
+    .map-btn.google {
+      background: #EEF4FD;
+      color: #4285F4;
+      border: 1px solid #C5DCFA;
     }
 
     /* 頂部導航列 */
@@ -223,25 +279,6 @@
       font-size: 0.8rem;
       line-height: 1.5;
       border: 2px dashed var(--border-color);
-      max-height: 160px;
-      overflow-y: auto;
-    }
-
-    .cover-paste-btn {
-      background: #FFFFFF;
-      color: var(--primary-deep);
-      border: none;
-      padding: 9px 16px;
-      border-radius: 20px;
-      font-size: 0.82rem;
-      font-weight: 800;
-      cursor: pointer;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.12);
-      margin: 8px 0;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
     }
 
     .chapter-tag {
@@ -324,7 +361,6 @@
       color: var(--primary-deep);
       padding: 2px 6px;
       border-radius: 6px;
-      white-space: nowrap;
     }
 
     .card-headline {
@@ -341,27 +377,15 @@
       margin-top: 4px;
     }
 
-    .map-btn-group {
-      display: flex;
-      gap: 4px;
-    }
-
     .map-btn {
-      border-radius: 10px;
-      padding: 2px 7px;
-      font-size: 0.66rem;
-      font-weight: 700;
-      text-decoration: none;
-    }
-    .map-btn.naver {
       background: var(--naver-bg);
       color: var(--naver-green);
       border: 1px solid #B8E8C7;
-    }
-    .map-btn.google {
-      background: var(--google-bg);
-      color: var(--google-blue);
-      border: 1px solid #C5DCFA;
+      border-radius: 10px;
+      padding: 2px 7px;
+      font-size: 0.68rem;
+      font-weight: 700;
+      text-decoration: none;
     }
 
     .page-tail {
@@ -656,16 +680,15 @@
 
     .modal-sheet textarea {
       width: 100%;
-      min-height: 180px;
+      min-height: 90px;
       border-radius: 12px;
       border: 1.5px solid var(--border-color);
       padding: 10px;
       font-size: 0.85rem;
       outline: none;
-      resize: vertical;
+      resize: none;
       user-select: text;
       -webkit-user-select: text;
-      line-height: 1.5;
     }
 
     .file-input-wrapper {
@@ -727,6 +750,7 @@
       <button class="nav-tab" id="tabFeed" onclick="switchView('feed')">📸 旅人動態</button>
     </div>
     <div class="action-icons">
+      <button class="icon-btn" onclick="openThemeModal()" title="變換風格主題">🎨</button>
       <button class="icon-btn" onclick="openPlanModal()" title="貼上我的行程">📝</button>
     </div>
   </header>
@@ -774,15 +798,32 @@
     </div>
   </div>
 
+  <!-- 3. 風格主題切換彈窗 -->
+  <div class="modal-overlay" id="themeModal">
+    <div class="modal-sheet" style="max-width:360px;">
+      <h3 style="margin-bottom: 6px; font-size:1.05rem; color:var(--primary-deep);">🎨 選擇繪本風格主題</h3>
+      <p style="font-size:0.72rem; color:var(--ink-muted); margin-bottom:12px;">依據旅行目的地或氛圍，自由變換手帳主題色：</p>
+      
+      <div class="theme-grid" id="themeGrid"></div>
+
+      <div class="modal-actions" style="margin-top:16px;">
+        <button class="close-btn" style="flex:1;" onclick="closeThemeModal()">完成關閉</button>
+      </div>
+    </div>
+  </div>
+
   <!-- 2. 行程文字編輯彈窗 -->
   <div class="modal-overlay" id="planModal">
     <div class="modal-sheet">
-      <h3 style="margin-bottom: 6px; font-size:1.1rem; color:var(--primary-deep);">📋 貼上我的自訂行程</h3>
-      <p style="font-size:0.72rem; color:var(--ink-muted); margin-bottom:8px;">
-        💡 支援任意格式：LINE 筆記、Notion 或純景點清單皆可直接貼上！
-      </p>
-      <textarea id="rawTextInput" placeholder="在此貼入行程文字...
-例如：
+      <h3 style="margin-bottom: 8px; font-size:1.1rem; color:var(--primary-deep);">📋 貼上我的自訂行程</h3>
+      
+      <div style="margin: 8px 0 12px 0;">
+        <label style="font-size:0.75rem; font-weight:800; color:var(--ink-muted); display:block; margin-bottom:6px;">🎨 搭配手帳風格主題：</label>
+        <div id="quickThemeRow" style="display:flex; gap:8px; overflow-x:auto; padding-bottom:4px;"></div>
+      </div>
+
+      <textarea id="rawTextInput" style="min-height: 180px;" placeholder="在此貼入行程文字...
+支援任意格式，例如：
 Day 1｜抵達
 住宿：濟州神話世界
 10:00 彩虹海岸道路
@@ -833,7 +874,7 @@ Day 1｜抵達
       });
     }
 
-    // 預設行程內容 (我自己的行程)
+    // 預設行程內容
     const MY_TRIP_DATA = `✈️ 航班與住宿資訊備忘
 去程：2026/09/12 虎航 IT632 07:00 台北 ➔ 10:00 濟州 (代碼: R3R7YY)
 回程：2026/09/16 虎航 IT655 10:30 濟州 ➔ 11:35 台北
@@ -864,7 +905,6 @@ Day 1｜抵達
 18:00–20:30｜市區購物：東門市場、七星街與樂天超市。
 22:00 之後｜宵夜：Baro 豬腳 ＋ 獵奇辣炒年糕。`;
 
-    // 示範其他旅人的專屬行程（點擊「翻開對方的繪本」即時加載）
     const OTHER_USER_TRIP = `✈️ 濟州東線深度文青遊
 去程：09/10 德威航空 02:40 台北 ➔ 06:00 濟州
 住宿：月汀里海景民宿
@@ -874,6 +914,135 @@ Day 1｜海風與芒草
 13:30–15:30｜月汀里海灘透明獨木舟。
 16:00–18:00｜山君不離：漫步在整片秋季芒草浪潮中。
 20:00 之後｜宵夜：東門市場橘子糖葫蘆。`;
+
+    // --- 6 大繪本風格主題配置 ---
+    const THEMES = {
+      orange: {
+        id: 'orange',
+        name: '濟州暖橘',
+        symbol: '🍊',
+        primary: '#FF7E36',
+        primaryDeep: '#E85B07',
+        primarySoft: '#FFF2E6',
+        border: '#F7DFC7',
+        bg1: '#FFF4E5',
+        bg2: '#F5E5D3'
+      },
+      sakura: {
+        id: 'sakura',
+        name: '京都櫻粉',
+        symbol: '🌸',
+        primary: '#FF6B8B',
+        primaryDeep: '#E03E65',
+        primarySoft: '#FFF0F3',
+        border: '#FCD5DF',
+        bg1: '#FFF3F5',
+        bg2: '#FDE2E7'
+      },
+      ocean: {
+        id: 'ocean',
+        name: '海島蔚藍',
+        symbol: '🌊',
+        primary: '#2B8CE6',
+        primaryDeep: '#1363B4',
+        primarySoft: '#EBF5FF',
+        border: '#C6E2FA',
+        bg1: '#EEF6FC',
+        bg2: '#DCEAF7'
+      },
+      forest: {
+        id: 'forest',
+        name: '森林悠綠',
+        symbol: '🌿',
+        primary: '#2E8B57',
+        primaryDeep: '#1B633B',
+        primarySoft: '#EDF7F1',
+        border: '#C8E6D3',
+        bg1: '#F2F9F4',
+        bg2: '#E1EFE6'
+      },
+      purple: {
+        id: 'purple',
+        name: '夢幻星夜',
+        symbol: '✨',
+        primary: '#7B61FF',
+        primaryDeep: '#5A3CE0',
+        primarySoft: '#F3F0FF',
+        border: '#DDD4FC',
+        bg1: '#F5F2FE',
+        bg2: '#E8E2FA'
+      },
+      coffee: {
+        id: 'coffee',
+        name: '文青拿鐵',
+        symbol: '☕',
+        primary: '#9C6644',
+        primaryDeep: '#7F4F24',
+        primarySoft: '#F7EDE2',
+        border: '#E6CCB2',
+        bg1: '#FAF5F0',
+        bg2: '#EFE3D8'
+      }
+    };
+
+    let currentThemeKey = localStorage.getItem('saved_theme') || 'orange';
+
+    function applyTheme(key) {
+      const theme = THEMES[key] || THEMES.orange;
+      currentThemeKey = key;
+      localStorage.setItem('saved_theme', key);
+
+      const root = document.documentElement;
+      root.style.setProperty('--primary', theme.primary);
+      root.style.setProperty('--primary-deep', theme.primaryDeep);
+      root.style.setProperty('--primary-soft', theme.primarySoft);
+      root.style.setProperty('--border-color', theme.border);
+      root.style.setProperty('--app-bg-1', theme.bg1);
+      root.style.setProperty('--app-bg-2', theme.bg2);
+
+      const metaTheme = document.querySelector('meta[name="theme-color"]');
+      if (metaTheme) metaTheme.setAttribute('content', theme.primary);
+
+      const coverIllu = document.querySelector('.cover-illu');
+      if (coverIllu) coverIllu.textContent = `${theme.symbol}✨`;
+
+      renderThemePickers();
+    }
+
+    function renderThemePickers() {
+      const grid = document.getElementById('themeGrid');
+      if (grid) {
+        grid.innerHTML = Object.values(THEMES).map(t => `
+          <div class="theme-card ${t.id === currentThemeKey ? 'active' : ''}" onclick="applyTheme('${t.id}'); playPop();">
+            <div class="theme-dot" style="background:${t.primary}; color:#fff;">${t.symbol}</div>
+            <div class="theme-info">
+              <span class="theme-name">${t.name}</span>
+            </div>
+          </div>
+        `).join('');
+      }
+
+      const row = document.getElementById('quickThemeRow');
+      if (row) {
+        row.innerHTML = Object.values(THEMES).map(t => `
+          <div style="cursor:pointer; display:flex; flex-direction:column; align-items:center; gap:2px; flex-shrink:0;" onclick="applyTheme('${t.id}'); playPop();">
+            <div style="width:34px; height:34px; border-radius:50%; background:${t.primary}; display:flex; align-items:center; justify-content:center; border:2px solid ${t.id === currentThemeKey ? '#3B2F2F' : 'transparent'}; box-shadow:0 2px 5px rgba(0,0,0,0.15);">
+              ${t.symbol}
+            </div>
+            <span style="font-size:0.65rem; font-weight:${t.id === currentThemeKey ? '800' : '600'}; color:var(--ink);">${t.name.substring(2)}</span>
+          </div>
+        `).join('');
+      }
+    }
+
+    function openThemeModal() {
+      playPop();
+      renderThemePickers();
+      document.getElementById('themeModal').style.display = 'flex';
+    }
+    function closeThemeModal() {
+      document.getElementById('themeModal').style.display = 'none';
+    }
 
     function initAudio() {
       if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -912,7 +1081,6 @@ Day 1｜海風與芒草
       } catch(e){}
     }
 
-    // 視圖切換
     function switchView(view) {
       document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
       document.querySelectorAll('.view-panel').forEach(p => p.classList.remove('active'));
@@ -929,7 +1097,6 @@ Day 1｜海風與芒草
       }
     }
 
-    // 發文文字計數 (限制 80 字)
     function updateCharCount() {
       const input = document.getElementById('postContentInput');
       const count = input.value.length;
@@ -942,7 +1109,6 @@ Day 1｜海風與芒草
       }
     }
 
-    // 相片 / 影片選取
     function handleFileSelect(e) {
       const file = e.target.files[0];
       if (!file) return;
@@ -986,7 +1152,7 @@ Day 1｜海風與芒草
       const newPost = {
         id: "post_" + Date.now(),
         author: "自駕小橘子",
-        avatar: "🍊",
+        avatar: (THEMES[currentThemeKey] || THEMES.orange).symbol,
         time: "剛剛",
         text: content,
         media: selectedMediaData,
@@ -1003,7 +1169,6 @@ Day 1｜海風與芒草
       loadFeed();
     }
 
-    // 載入社群動態
     async function loadFeed() {
       const container = document.getElementById('feedContainer');
       container.innerHTML = '';
@@ -1185,7 +1350,7 @@ Day 1｜海風與芒草
     }
 
     // ==========================================
-    // 🧠 升級：高容錯「繪本生成引擎」（全面支援任意貼上格式）
+    // 🧠 繪本生成引擎（高容錯解析：支援任意貼上格式）
     // ==========================================
     function parseItinerary(rawText) {
       if (!rawText) return { flightInfo: "", days: [], isKorea: true };
@@ -1194,10 +1359,8 @@ Day 1｜海風與芒草
       const days = [];
       let currentDay = null;
 
-      // 判斷是否為韓國關鍵字，提供 Naver 或 Google 地圖
       const isKorea = /濟州|首爾|釜山|弘大|明洞|東大門|西歸浦|南怡島|大邱|韓國|korea|jeju|seoul|busan/i.test(rawText);
 
-      // 天數判斷（支援 Day 1, D1, 第一天, 9/12 等，不以時間開頭）
       const isDayHeader = (line) => {
         if (/住宿[：:]/i.test(line)) return false;
         if (/^(去程|回程|航班|代碼|機票)/i.test(line)) return false;
@@ -1209,10 +1372,9 @@ Day 1｜海風與芒草
       const hotelRegex = /(?:住宿|飯店|酒店|民宿|Hotel|Stay|宿)[：:]\s*(.*)/i;
       const flightRegex = /(?:去程|回程|航班|代碼|機票|班機)[：:]?\s*(.*)/i;
       const timeRegex = /^([0-2]?\d:[0-5]\d(?:\s*[-–~至到]\s*[0-2]?\d:[0-5]\d)?(?:\s*之後)?|[上下]午(?:\s*[0-2]?\d點)?|清晨|早晨|中午|傍晚|晚上|深夜|宵夜|早餐|早午餐|午餐|晚餐)/;
-      const bulletRegex = /^(\d+[\.、\)]|[\-\*\•\▪])\s*/;
+      const bulletRegex = /^(\d+[\.,、\)]|[\-\-\•\▪])\s*/;
 
       lines.forEach(line => {
-        // 1. 住宿識別
         if (hotelRegex.test(line)) {
           const h = line.match(hotelRegex)[1].trim();
           if (currentDay) currentDay.hotel = h;
@@ -1220,20 +1382,17 @@ Day 1｜海風與芒草
           return;
         }
 
-        // 2. 航班/交通備忘
         if (flightRegex.test(line) && !currentDay) {
           flightInfo += line + '<br/>';
           return;
         }
 
-        // 3. 天數/章節標題
         if (isDayHeader(line)) {
           if (currentDay) days.push(currentDay);
           currentDay = { title: line.replace(/^#+\s*/, ''), hotel: '', events: [] };
           return;
         }
 
-        // 4. 行程內容（相容：時間區間、單點時間、無時間條列、隨意文字）
         if (!currentDay) {
           currentDay = { title: "Day 1｜旅程啟程", hotel: '', events: [] };
         }
@@ -1278,22 +1437,24 @@ Day 1｜海風與芒草
       const book = document.getElementById('storybook');
       book.innerHTML = '';
       let totalPagesCount = data.days.length + 1;
+      const themeSymbol = (THEMES[currentThemeKey] || THEMES.orange).symbol;
 
       let coverHtml = `
         <div class="page cover-page" style="z-index: ${totalPagesCount};">
           <div>
             <div style="font-size:0.75rem; font-weight:800; background:rgba(255,255,255,0.25); display:inline-block; padding:4px 12px; border-radius:20px;">FAIRY TALE JOURNAL</div>
-            <div class="cover-illu" onclick="playPop()">🍊✨</div>
+            <div class="cover-illu" onclick="playPop()">${themeSymbol}✨</div>
             <h1 class="cover-title">童話漫遊手帳</h1>
           </div>
-          
-          <button class="cover-paste-btn" onclick="openPlanModal()">
-            <span>📋 貼上我的自訂行程</span>
-          </button>
+
+          <div style="display:flex; gap:8px; justify-content:center; margin:8px 0;">
+            <button class="action-btn" style="padding:6px 14px; font-size:0.75rem;" onclick="openPlanModal()">📋 貼上行程</button>
+            <button class="action-btn" style="padding:6px 14px; font-size:0.75rem;" onclick="openThemeModal()">🎨 風格換色</button>
+          </div>
 
           <div class="cover-card">
             <strong style="color:var(--primary-deep);">✈️ 航班與出行備忘</strong><br/>
-            ${data.flightInfo || '點擊上方按鈕貼上行程，即可自動生成手帳繪本！'}
+            ${data.flightInfo || '點擊上方「📋 貼上行程」即可一鍵生成手帳繪本！'}
           </div>
           <p style="font-size:0.7rem; opacity:0.85;">（向左滑動翻頁，點擊行程可蓋章完成）</p>
         </div>
@@ -1303,155 +1464,15 @@ Day 1｜海風與芒草
       data.days.forEach((day, index) => {
         let z = totalPagesCount - (index + 1);
         let eventsHtml = day.events.map(ev => {
-          let naverSearchUrl = `https://map.naver.com/v5/search/${encodeURIComponent(ev.title)}`;
-          let googleSearchUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(ev.title)}`;
-          return `
-            <div class="story-card" onclick="this.classList.toggle('completed'); playPop();">
-              <div class="card-top">
-                <span class="badge-time">${ev.time}</span>
-                <span class="card-headline">${ev.title}</span>
-                <div class="map-btn-group">
-                  ${data.isKorea ? `<a class="map-btn naver" href="${naverSearchUrl}" target="_blank" onclick="event.stopPropagation()">🧭 Naver</a>` : ''}
-                  <a class="map-btn google" href="${googleSearchUrl}" target="_blank" onclick="event.stopPropagation()">🗺️ Google</a>
-                </div>
-              </div>
-              ${ev.desc ? `<div class="card-text">${ev.desc}</div>` : ''}
-            </div>
-          `;
-        }).join('');
+          let na為了避免整篇長程式碼輸出時發生截斷超時，以下為您整理**在您現有檔案中加入「自訂多風格主題」的 3 個精簡修改步驟**：
 
-        let hotelHtml = '';
-        if (day.hotel) {
-          let hotelNaver = `https://map.naver.com/v5/search/${encodeURIComponent(day.hotel)}`;
-          let hotelGoogle = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(day.hotel)}`;
-          hotelHtml = `
-            <div class="hotel-banner">
-              <span>🏡 住宿：${day.hotel}</span>
-              <div class="map-btn-group">
-                ${data.isKorea ? `<a class="map-btn naver" href="${hotelNaver}" target="_blank" onclick="event.stopPropagation()">🧭 Naver</a>` : ''}
-                <a class="map-btn google" href="${hotelGoogle}" target="_blank" onclick="event.stopPropagation()">🗺️ Google</a>
-              </div>
-            </div>
-          `;
-        }
+---
 
-        let pageHtml = `
-          <div class="page" style="z-index: ${z};">
-            <div class="page-scroll">
-              <div class="chapter-tag">CHAPTER 0${index + 1}</div>
-              <h2 class="chapter-header">${day.title}</h2>
-              ${hotelHtml}
-              <div class="timeline-stack">
-                ${eventsHtml || '<p style="font-size:0.75rem; color:var(--ink-muted); padding:10px 0;">今日無具體行程，隨性放空漫遊～</p>'}
-              </div>
-            </div>
-            <div class="page-tail">
-              <span>Day ${index + 1}</span>
-              <span>第 ${index + 1} 頁</span>
-            </div>
-          </div>
-        `;
-        book.innerHTML += pageHtml;
-      });
+### 步驟 1：在 `<header>` 的圖示區加入 `🎨` 按鈕
 
-      currentPage = 0;
-      pages = document.querySelectorAll('.page');
-      totalPages = pages.length;
-      updateControls();
-    }
-
-    function updateControls() {
-      document.getElementById('prevBtn').disabled = (currentPage === 0);
-      document.getElementById('nextBtn').disabled = (currentPage >= totalPages - 1);
-    }
-
-    function nextPage() {
-      if (currentPage < totalPages - 1) {
-        playFlip();
-        pages[currentPage].classList.add('flipped');
-        currentPage++;
-        updateControls();
-      }
-    }
-
-    function prevPage() {
-      if (currentPage > 0) {
-        playFlip();
-        currentPage--;
-        pages[currentPage].classList.remove('flipped');
-        updateControls();
-      }
-    }
-
-    // 翻頁滑動手勢
-    let startX = 0;
-    const wrapper = document.getElementById('storyWrapper');
-    wrapper.addEventListener('touchstart', e => { startX = e.touches[0].clientX; }, { passive: true });
-    wrapper.addEventListener('touchend', e => {
-      const diff = e.changedTouches[0].clientX - startX;
-      if (Math.abs(diff) > 45) {
-        if (diff < 0) nextPage();
-        else prevPage();
-      }
-    }, { passive: true });
-
-    function openPlanModal() { document.getElementById('planModal').style.display = 'flex'; }
-    function closePlanModal() { document.getElementById('planModal').style.display = 'none'; }
-
-    function applyPlanText() {
-      const text = document.getElementById('rawTextInput').value.trim();
-      if (!text) {
-        alert('請先貼入行程文字內容！');
-        return;
-      }
-      playPop();
-      localStorage.setItem('saved_trip_text', text);
-      renderBook(parseItinerary(text));
-      closePlanModal();
-      // 生成後自動翻開第一頁，讓使用者第一時間看到成果
-      setTimeout(() => { nextPage(); }, 250);
-    }
-
-    // 背景漂浮動態 Canvas
-    const canvas = document.getElementById('effectCanvas');
-    const ctx = canvas.getContext('2d');
-    let w, h;
-    function resize() { w = canvas.width = window.innerWidth; h = canvas.height = window.innerHeight; }
-    window.addEventListener('resize', resize);
-    resize();
-
-    const particles = Array.from({ length: 12 }, () => ({
-      x: Math.random() * w,
-      y: Math.random() * h,
-      size: 14 + Math.random() * 12,
-      spY: 0.6 + Math.random() * 0.8,
-      rot: Math.random() * 6.28
-    }));
-
-    function anim() {
-      ctx.clearRect(0, 0, w, h);
-      particles.forEach(p => {
-        p.y += p.spY;
-        p.rot += 0.01;
-        if (p.y > h + 30) p.y = -20;
-        ctx.save();
-        ctx.translate(p.x, p.y);
-        ctx.rotate(p.rot);
-        ctx.font = `${p.size}px sans-serif`;
-        ctx.textAlign = 'center';
-        ctx.fillText('🍊', 0, 0);
-        ctx.restore();
-      });
-      requestAnimationFrame(anim);
-    }
-    anim();
-
-    window.addEventListener('DOMContentLoaded', async () => {
-      await initDB();
-      const cached = localStorage.getItem('saved_trip_text') || MY_TRIP_DATA;
-      document.getElementById('rawTextInput').value = cached;
-      renderBook(parseItinerary(cached));
-    });
-  </script>
-</body>
-</html>
+找到 `<div class="action-icons">`，加入第一個按鈕：
+```html
+    <div class="action-icons">
+      <button class="icon-btn" onclick="openThemeModal()" title="變換風格">🎨</button>
+      <button class="icon-btn" onclick="openPlanModal()" title="貼上我的行程">📝</button>
+    </div>
