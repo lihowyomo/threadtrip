@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-  <title>童話漫遊手帳 🎨 多風格社群版</title>
+  <title>童話漫遊手帳 🎨 拍立得與權限版</title>
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
   <meta name="theme-color" content="#FF7E36" />
@@ -38,17 +38,18 @@
     .view-panel.active { display: flex; flex-direction: column; align-items: center; justify-content: center; }
     .storybook-wrapper { position: relative; width: min(92vw, 420px); height: min(78vh, 700px); perspective: 1800px; }
     .storybook { position: relative; width: 100%; height: 100%; transform-style: preserve-3d; border-radius: 24px; box-shadow: 0 20px 40px rgba(0,0,0,0.12); }
-    .page { position: absolute; width: 100%; height: 100%; top: 0; right: 0; background-color: var(--paper-bg); border-radius: 12px 24px 24px 12px; border: 3px solid var(--border-color); padding: 20px 16px 14px 20px; display: flex; flex-direction: column; transform-origin: left center; transform-style: preserve-3d; transition: transform 0.75s cubic-bezier(0.25, 1, 0.35, 1); box-shadow: inset 18px 0 25px -12px rgba(0,0,0,0.08); overflow: hidden; }
+    .page { position: absolute; width: 100%; height: 100%; top: 0; right: 0; background-color: var(--paper-bg); border-radius: 12px 24px 24px 12px; border: 3px solid var(--border-color); padding: 18px 16px 14px 18px; display: flex; flex-direction: column; transform-origin: left center; transform-style: preserve-3d; transition: transform 0.75s cubic-bezier(0.25, 1, 0.35, 1); box-shadow: inset 18px 0 25px -12px rgba(0,0,0,0.08); overflow: hidden; }
     .page.flipped { transform: rotateY(-180deg); pointer-events: none; }
     .page-scroll { height: 100%; overflow-y: auto; scrollbar-width: none; padding-bottom: 24px; backface-visibility: hidden; -webkit-backface-visibility: hidden; }
     .page-scroll::-webkit-scrollbar { display: none; }
-    .cover-page { background: linear-gradient(150deg, var(--primary) 0%, var(--primary-deep) 100%); color: #FFFFFF; border: 3px solid var(--primary-deep); display: flex; flex-direction: column; justify-content: space-between; text-align: center; padding: 26px 18px; border-radius: 24px; }
-    .cover-illu { font-size: 3.8rem; cursor: pointer; display: inline-block; margin: 4px 0; }
-    .cover-title { font-size: 1.8rem; font-weight: 900; text-shadow: 0 3px 10px rgba(0, 0, 0, 0.2); }
-    .cover-card { background: #FFFFFF; color: var(--ink); border-radius: 16px; padding: 12px 14px; text-align: left; font-size: 0.8rem; line-height: 1.5; border: 2px dashed var(--border-color); max-height: 150px; overflow-y: auto; }
+    .cover-page { background: linear-gradient(150deg, var(--primary) 0%, var(--primary-deep) 100%); color: #FFFFFF; border: 3px solid var(--primary-deep); display: flex; flex-direction: column; justify-content: space-between; text-align: center; padding: 22px 18px; border-radius: 24px; }
+    .cover-illu { font-size: 3.6rem; cursor: pointer; display: inline-block; margin: 2px 0; }
+    .cover-title { font-size: 1.75rem; font-weight: 900; text-shadow: 0 3px 10px rgba(0, 0, 0, 0.2); }
+    .cover-card { background: #FFFFFF; color: var(--ink); border-radius: 16px; padding: 10px 12px; text-align: left; font-size: 0.78rem; line-height: 1.45; border: 2px dashed var(--border-color); max-height: 140px; overflow-y: auto; }
+    .privacy-badge { display: inline-flex; align-items: center; gap: 4px; padding: 3px 10px; border-radius: 12px; font-size: 0.72rem; font-weight: 800; background: rgba(255,255,255,0.25); color: #fff; cursor: pointer; border: 1px solid rgba(255,255,255,0.4); margin: 4px auto; }
     .chapter-tag { display: inline-flex; background: var(--primary-soft); border: 1px solid var(--border-color); color: var(--primary-deep); font-size: 0.72rem; font-weight: 800; padding: 3px 10px; border-radius: 14px; margin-bottom: 4px; }
-    .chapter-header { font-size: 1.05rem; font-weight: 800; margin-bottom: 10px; }
-    .hotel-banner { background: var(--primary-soft); border: 1px solid var(--border-color); color: var(--primary-deep); font-size: 0.74rem; font-weight: 700; padding: 6px 10px; border-radius: 10px; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; gap: 6px; }
+    .chapter-header { font-size: 1.05rem; font-weight: 800; margin-bottom: 8px; }
+    .hotel-banner { background: var(--primary-soft); border: 1px solid var(--border-color); color: var(--primary-deep); font-size: 0.74rem; font-weight: 700; padding: 6px 10px; border-radius: 10px; margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between; gap: 6px; }
     .timeline-stack { display: flex; flex-direction: column; gap: 9px; }
     .story-card { background: var(--paper-card); border: 1.5px solid var(--border-color); border-radius: 12px; padding: 9px 12px; position: relative; cursor: pointer; transition: 0.2s; }
     .story-card.completed { border-color: #8FD19E; background: #F8FFF9; }
@@ -61,10 +62,24 @@
     .map-btn { border-radius: 10px; padding: 2px 7px; font-size: 0.66rem; font-weight: 700; text-decoration: none; }
     .map-btn.naver { background: var(--naver-bg); color: var(--naver-green); border: 1px solid #B8E8C7; }
     .map-btn.google { background: var(--google-bg); color: var(--google-blue); border: 1px solid #C5DCFA; }
-    .page-tail { display: flex; justify-content: space-between; align-items: center; padding-top: 8px; font-size: 0.7rem; color: var(--ink-muted); border-top: 1px dashed var(--border-color); }
-    .book-controls { margin-top: 10px; display: flex; gap: 12px; align-items: center; }
-    .action-btn { background: #FFFFFF; color: var(--primary-deep); border: 2px solid var(--primary); padding: 7px 16px; border-radius: 25px; font-size: 0.82rem; font-weight: 800; cursor: pointer; transition: 0.2s; }
+
+    /* 📸 拍立得相片元件樣式 */
+    .polaroid-container { margin: 12px 0 6px 0; display: flex; flex-direction: column; align-items: center; position: relative; }
+    .polaroid-frame { background: #FFFFFF; padding: 8px 8px 24px 8px; border-radius: 3px; box-shadow: 0 4px 12px rgba(0,0,0,0.16), 0 1px 3px rgba(0,0,0,0.08); width: 88%; max-width: 260px; position: relative; transform: rotate(-1.5deg); transition: transform 0.25s ease; border: 1px solid rgba(0,0,0,0.06); }
+    .polaroid-frame:hover { transform: rotate(0deg) scale(1.02); }
+    .polaroid-tape { position: absolute; top: -9px; left: 50%; transform: translateX(-50%); width: 70px; height: 18px; background: rgba(255, 230, 180, 0.75); backdrop-filter: blur(2px); border-radius: 2px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+    .polaroid-img-box { width: 100%; aspect-ratio: 1/1; background: #222; overflow: hidden; display: flex; align-items: center; justify-content: center; border-radius: 2px; }
+    .polaroid-img-box img { width: 100%; height: 100%; object-fit: cover; }
+    .polaroid-caption { font-size: 0.75rem; font-weight: 700; color: #4A3E39; text-align: center; margin-top: 8px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .polaroid-del-btn { position: absolute; right: 4px; bottom: 4px; background: none; border: none; font-size: 0.7rem; color: #B0A29A; cursor: pointer; padding: 2px; }
+    .add-polaroid-btn { background: var(--paper-card); border: 1.5px dashed var(--border-color); color: var(--primary-deep); padding: 8px 12px; border-radius: 12px; font-size: 0.75rem; font-weight: 800; cursor: pointer; width: 100%; display: flex; align-items: center; justify-content: center; gap: 6px; margin-top: 10px; transition: 0.2s; }
+    .add-polaroid-btn:hover { background: var(--primary-soft); border-color: var(--primary); }
+
+    .page-tail { display: flex; justify-content: space-between; align-items: center; padding-top: 8px; font-size: 0.7rem; color: var(--ink-muted); border-top: 1px dashed var(--border-color); margin-top: 8px; }
+    .book-controls { margin-top: 8px; display: flex; gap: 12px; align-items: center; }
+    .action-btn { background: #FFFFFF; color: var(--primary-deep); border: 2px solid var(--primary); padding: 6px 16px; border-radius: 25px; font-size: 0.8rem; font-weight: 800; cursor: pointer; transition: 0.2s; }
     .action-btn:disabled { opacity: 0.35; pointer-events: none; border-color: #D6C5B8; color: #9C8F84; }
+    
     #communityView { justify-content: flex-start; padding: 10px 16px; overflow-y: auto; }
     .feed-container { width: 100%; max-width: 440px; display: flex; flex-direction: column; gap: 14px; padding-bottom: 70px; }
     .feed-card { background: #FFFFFF; border: 2px solid var(--border-color); border-radius: 18px; padding: 14px; box-shadow: 0 4px 12px rgba(0,0,0,0.04); display: flex; flex-direction: column; gap: 10px; }
@@ -92,6 +107,7 @@
     .comment-input { flex: 1; border: 1px solid var(--border-color); border-radius: 14px; padding: 4px 10px; font-size: 0.76rem; outline: none; user-select: text; -webkit-user-select: text; }
     .comment-send-btn { background: var(--primary); color: #fff; border: none; border-radius: 14px; padding: 4px 10px; font-size: 0.72rem; font-weight: 800; cursor: pointer; }
     .post-fab { position: fixed; bottom: 24px; right: 24px; background: var(--primary); color: #fff; border: none; width: 54px; height: 54px; border-radius: 50%; box-shadow: 0 6px 18px rgba(232, 91, 7, 0.4); font-size: 1.6rem; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 20; }
+    
     .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.45); z-index: 99; align-items: center; justify-content: center; padding: 20px; }
     .modal-sheet { background: var(--paper-bg); width: 100%; max-width: 420px; max-height: 90vh; border-radius: 24px; padding: 20px; display: flex; flex-direction: column; box-shadow: 0 15px 35px rgba(0,0,0,0.2); overflow-y: auto; }
     .char-limit-indicator { text-align: right; font-size: 0.72rem; color: var(--ink-muted); margin-top: 4px; }
@@ -105,6 +121,13 @@
     .theme-card { background: #FFFFFF; border: 2px solid #EFE5DB; border-radius: 14px; padding: 10px; display: flex; align-items: center; gap: 8px; cursor: pointer; transition: 0.2s; }
     .theme-card.active { border-color: var(--primary); background: var(--primary-soft); box-shadow: 0 4px 10px rgba(0,0,0,0.08); }
     .theme-dot { width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1rem; box-shadow: 0 2px 5px rgba(0,0,0,0.15); flex-shrink: 0; }
+    
+    /* 隱私設定卡片 */
+    .privacy-option { background: #fff; border: 2px solid #EFE5DB; border-radius: 14px; padding: 12px; margin-bottom: 8px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; transition: 0.2s; }
+    .privacy-option.active { border-color: var(--primary); background: var(--primary-soft); }
+    .privacy-text { display: flex; flex-direction: column; gap: 2px; }
+    .privacy-title { font-size: 0.85rem; font-weight: 800; color: var(--ink); }
+    .privacy-desc { font-size: 0.7rem; color: var(--ink-muted); }
   </style>
 </head>
 <body>
@@ -115,8 +138,9 @@
       <button class="nav-tab" id="tabFeed" onclick="switchView('feed')">📸 旅人動態</button>
     </div>
     <div class="action-icons">
-      <button class="icon-btn" onclick="openThemeModal()" title="變換風格主題">🎨</button>
-      <button class="icon-btn" onclick="openPlanModal()" title="貼上我的行程">📝</button>
+      <button class="icon-btn" onclick="openPrivacyModal()" title="隱私設定">🔒</button>
+      <button class="icon-btn" onclick="openThemeModal()" title="風格主題">🎨</button>
+      <button class="icon-btn" onclick="openPlanModal()" title="貼上行程">📝</button>
     </div>
   </header>
 
@@ -168,7 +192,19 @@
     </div>
   </div>
 
-  <!-- 3. 行程文字貼上彈窗 -->
+  <!-- 3. 隱私權限設定彈窗 -->
+  <div class="modal-overlay" id="privacyModal">
+    <div class="modal-sheet" style="max-width:360px;">
+      <h3 style="margin-bottom: 6px; font-size:1.05rem; color:var(--primary-deep);">🔒 繪本隱私權限設定</h3>
+      <p style="font-size:0.72rem; color:var(--ink-muted); margin-bottom:12px;">控制社群動態中誰可以翻開您的繪本手帳：</p>
+      <div id="privacyOptionsContainer"></div>
+      <div class="modal-actions" style="margin-top:16px;">
+        <button class="close-btn" style="flex:1;" onclick="closePrivacyModal()">確認保存</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. 行程文字貼上彈窗 -->
   <div class="modal-overlay" id="planModal">
     <div class="modal-sheet">
       <h3 style="margin-bottom: 6px; font-size:1.1rem; color:var(--primary-deep);">📋 貼上我的自訂行程</h3>
@@ -190,8 +226,32 @@ Day 1｜啟程
     </div>
   </div>
 
+  <!-- 5. 拍立得照片上傳彈窗 -->
+  <div class="modal-overlay" id="polaroidModal">
+    <div class="modal-sheet" style="max-width:360px;">
+      <h3 style="margin-bottom: 6px; font-size:1.05rem; color:var(--primary-deep);">📸 貼上一張拍立得底片</h3>
+      <p style="font-size:0.72rem; color:var(--ink-muted); margin-bottom:10px;">為這一天留下手帳照片與拍立得留白手寫心情：</p>
+      <input type="file" id="polaroidFileInput" accept="image/*" onchange="handlePolaroidSelect(event)" style="font-size:0.75rem; margin-bottom:8px;" />
+      <div class="preview-box" id="polaroidPreview" style="margin-bottom:8px; aspect-ratio:1/1;"></div>
+      <input type="text" id="polaroidCaptionInput" placeholder="寫一句手寫拍立得心情（例：果凍海超療癒✨）" style="width:100%; padding:8px 10px; border-radius:10px; border:1px solid var(--border-color); font-size:0.78rem; outline:none;" />
+      <div class="modal-actions" style="margin-top:12px;">
+        <button class="close-btn" onclick="closePolaroidModal()">取消</button>
+        <button class="submit-btn" onclick="savePolaroidPhoto()">貼上手帳</button>
+      </div>
+    </div>
+  </div>
+
   <script>
     let currentPage = 0, pages = [], totalPages = 0, audioCtx = null, selectedMediaData = null, db = null;
+    let targetDayIndexForPolaroid = 0;
+    let tempPolaroidImgData = null;
+
+    const PRIVACY_MODES = {
+      public: { id: 'public', title: '🌐 公開手帳', desc: '任何人皆可透過動態或連結翻開瀏覽' },
+      followers: { id: 'followers', title: '👥 限追蹤者觀看', desc: '只有追蹤您的旅人好友才能解鎖翻閱' },
+      private: { id: 'private', title: '🔒 私人手帳', desc: '完全隱藏，僅有您自己能翻開' }
+    };
+    let currentPrivacy = localStorage.getItem('trip_privacy') || 'public';
 
     const THEMES = {
       orange: { id: 'orange', name: '濟州暖橘', symbol: '🍊', primary: '#FF7E36', deep: '#E85B07', soft: '#FFF2E6', border: '#F7DFC7', bg1: '#FFF4E5', bg2: '#F5E5D3' },
@@ -244,12 +304,43 @@ Day 1｜啟程
     function openThemeModal() { playPop(); renderThemePickers(); document.getElementById('themeModal').style.display = 'flex'; }
     function closeThemeModal() { document.getElementById('themeModal').style.display = 'none'; }
 
+    function openPrivacyModal() {
+      playPop();
+      renderPrivacyOptions();
+      document.getElementById('privacyModal').style.display = 'flex';
+    }
+    function closePrivacyModal() { document.getElementById('privacyModal').style.display = 'none'; }
+
+    function setPrivacy(mode) {
+      playPop();
+      currentPrivacy = mode;
+      localStorage.setItem('trip_privacy', mode);
+      renderPrivacyOptions();
+      const badge = document.getElementById('coverPrivacyBadge');
+      if (badge) badge.innerHTML = PRIVACY_MODES[mode].title;
+    }
+
+    function renderPrivacyOptions() {
+      const container = document.getElementById('privacyOptionsContainer');
+      if (!container) return;
+      container.innerHTML = Object.values(PRIVACY_MODES).map(m => `
+        <div class="privacy-option ${m.id === currentPrivacy ? 'active' : ''}" onclick="setPrivacy('${m.id}')">
+          <div class="privacy-text">
+            <span class="privacy-title">${m.title}</span>
+            <span class="privacy-desc">${m.desc}</span>
+          </div>
+          <span style="font-size:1.1rem; color:var(--primary); font-weight:900;">${m.id === currentPrivacy ? '✓' : ''}</span>
+        </div>
+      `).join('');
+    }
+
     function initDB() {
       return new Promise((resolve) => {
-        const req = indexedDB.open("TravelThreadsDB", 1);
+        const req = indexedDB.open("TravelThreadsDB", 2);
         req.onupgradeneeded = (e) => {
           const d = e.target.result;
           if (!d.objectStoreNames.contains("posts")) d.createObjectStore("posts", { keyPath: "id" });
+          if (!d.objectStoreNames.contains("polaroids")) d.createObjectStore("polaroids", { keyPath: "dayIndex" });
         };
         req.onsuccess = (e) => { db = e.target.result; resolve(db); };
       });
@@ -262,8 +353,33 @@ Day 1｜啟程
       });
     }
 
+    function savePolaroidToDB(dayIndex, imgData, caption) {
+      return new Promise((resolve) => {
+        const tx = db.transaction(["polaroids"], "readwrite");
+        tx.objectStore("polaroids").put({ dayIndex, imgData, caption });
+        tx.oncomplete = () => resolve();
+      });
+    }
+    function deletePolaroidFromDB(dayIndex) {
+      return new Promise((resolve) => {
+        const tx = db.transaction(["polaroids"], "readwrite");
+        tx.objectStore("polaroids").delete(dayIndex);
+        tx.oncomplete = () => resolve();
+      });
+    }
+    function getAllPolaroidsFromDB() {
+      return new Promise((resolve) => {
+        const req = db.transaction(["polaroids"], "readonly").objectStore("polaroids").getAll();
+        req.onsuccess = () => {
+          const map = {};
+          (req.result || []).forEach(item => { map[item.dayIndex] = item; });
+          resolve(map);
+        };
+      });
+    }
+
     const MY_TRIP_DATA = `✈️ 航班與住宿資訊備忘
-去程：2026/09/12 虎航 IT632 07:00 台北 ➔ 10:00 濟州
+去程：2026/09/12 虎航 IT632 07:00 台北 ➔ 10:00 濟州 (代碼: R3R7YY)
 回程：2026/09/16 虎航 IT655 10:30 濟州 ➔ 11:35 台北
 
 9/12（六）Day 1｜彩虹道路 ➔ 涯月拍貼 ➔ 981重力賽車
@@ -384,6 +500,7 @@ Day 1｜海風與芒草
         liked: false,
         isFollowing: false,
         comments: [],
+        privacy: currentPrivacy,
         tripData: localStorage.getItem('saved_trip_text') || MY_TRIP_DATA
       };
       savePostToDB(newPost);
@@ -397,38 +514,66 @@ Day 1｜海風與芒草
       container.innerHTML = '';
       let posts = await getAllPostsFromDB();
       if (posts.length === 0) {
-        posts = [{
-          id: "demo_1",
-          author: "果凍海慢遊者",
-          avatar: "🌊",
-          time: "2 小時前",
-          text: "月汀里的漸層藍真的絕了！坐在海邊喝冰拿鐵超治癒～",
-          media: { type: "image", url: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80" },
-          likes: 12, liked: false, isFollowing: false,
-          comments: [{ user: "濟州通", text: "一定要吃黑豬肉漢堡！" }],
-          tripData: OTHER_USER_TRIP
-        }];
+        posts = [
+          {
+            id: "demo_1",
+            author: "果凍海慢遊者",
+            avatar: "🌊",
+            time: "2 小時前",
+            text: "月汀里的漸層藍真的絕了！坐在海邊喝冰拿鐵超治癒～",
+            media: { type: "image", url: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80" },
+            likes: 12, liked: false, isFollowing: false,
+            comments: [{ user: "濟州通", text: "一定要吃黑豬肉漢堡！" }],
+            privacy: 'public',
+            tripData: OTHER_USER_TRIP
+          },
+          {
+            id: "demo_2",
+            author: "私房秘境探險家",
+            avatar: "🌲",
+            time: "5 小時前",
+            text: "這份私房步道地圖只分享給我的好友！追蹤我即可解鎖看繪本手帳～",
+            media: { type: "image", url: "https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=800&q=80" },
+            likes: 28, liked: false, isFollowing: false,
+            comments: [],
+            privacy: 'followers',
+            tripData: `Day 1｜秘境森林漫步\n住宿：森林木屋\n09:00 私房步道秘境探索\n14:00 湖畔私房手沖咖啡`
+          }
+        ];
         posts.forEach(p => savePostToDB(p));
       }
       posts.reverse().forEach(p => {
         let mediaHtml = p.media ? (p.media.type === 'video' ? `<div class="feed-media-box"><video src="${p.media.url}" controls playsinline></video></div>` : `<div class="feed-media-box"><img src="${p.media.url}" /></div>`) : '';
         let commentsHtml = (p.comments || []).map(c => `<div class="comment-item"><span class="comment-user">${c.user}:</span><span>${c.text}</span></div>`).join('');
+        
+        let privacyLabel = p.privacy === 'private' ? '🔒 私人手帳' : (p.privacy === 'followers' ? '👥 限追蹤者' : '🌐 公開手帳');
+        let canOpen = p.privacy === 'public' || (p.privacy === 'followers' && p.isFollowing) || p.author === '漫遊旅人';
+
         const card = document.createElement('div');
         card.className = 'feed-card';
         card.innerHTML = `
           <div class="feed-header">
             <div class="feed-user">
               <div class="avatar">${p.avatar || '🍊'}</div>
-              <div class="user-meta"><span class="user-name">${p.author}</span><span class="post-time">${p.time}</span></div>
+              <div class="user-meta">
+                <span class="user-name">${p.author}</span>
+                <span class="post-time">${p.time} · ${privacyLabel}</span>
+              </div>
             </div>
             <button class="follow-btn ${p.isFollowing ? 'following' : ''}" onclick="toggleFollow('${p.id}', this)">${p.isFollowing ? '已追蹤' : '＋ 追蹤'}</button>
           </div>
           ${p.text ? `<div class="feed-text">${p.text}</div>` : ''}
           ${mediaHtml}
-          <div class="open-book-banner" onclick="openAuthorBook('${p.id}')">
-            <div class="open-book-title"><span>📖 翻開【${p.author}】的專屬旅遊繪本</span></div>
-            <div style="font-size:0.75rem; color:var(--primary-deep); font-weight:800;">查閱行程 ›</div>
+          
+          <div class="open-book-banner" onclick="handleOpenBookClick('${p.id}')">
+            <div class="open-book-title">
+              <span>${p.privacy === 'private' ? '🔒' : (p.privacy === 'followers' ? '👥' : '📖')} 翻開【${p.author}】的專屬旅遊繪本</span>
+            </div>
+            <div style="font-size:0.75rem; color:var(--primary-deep); font-weight:800;">
+              ${canOpen ? '查閱行程 ›' : (p.privacy === 'private' ? '已私密隱藏' : '追蹤後解鎖 ›')}
+            </div>
           </div>
+
           <div class="feed-actions">
             <button class="action-sub-btn ${p.liked ? 'liked' : ''}" onclick="toggleLike('${p.id}', this)">❤️ <span>${p.likes}</span></button>
             <button class="action-sub-btn" onclick="toggleCommentsBox('${p.id}')">💬 <span>${p.comments ? p.comments.length : 0}</span></button>
@@ -446,6 +591,23 @@ Day 1｜海風與芒草
       });
     }
 
+    async function handleOpenBookClick(postId) {
+      const posts = await getAllPostsFromDB();
+      const target = posts.find(p => p.id === postId);
+      if (!target) return;
+      if (target.author !== '漫遊旅人') {
+        if (target.privacy === 'private') {
+          alert('🔒 此繪本手帳作者已設為「私人隱藏」，不對外公開喔！');
+          return;
+        }
+        if (target.privacy === 'followers' && !target.isFollowing) {
+          alert('👥 此手帳為「限定追蹤者觀看」！請先點擊右上角【＋ 追蹤】即可解鎖翻閱～');
+          return;
+        }
+      }
+      openAuthorBook(postId);
+    }
+
     async function toggleFollow(id, btn) {
       playPop();
       const posts = await getAllPostsFromDB();
@@ -453,8 +615,7 @@ Day 1｜海風與芒草
       if (target) {
         target.isFollowing = !target.isFollowing;
         savePostToDB(target);
-        btn.classList.toggle('following', target.isFollowing);
-        btn.textContent = target.isFollowing ? '已追蹤' : '＋ 追蹤';
+        loadFeed();
       }
     }
     async function toggleLike(id, btn) {
@@ -507,6 +668,66 @@ Day 1｜海風與芒草
       } else alert('該作者尚未公開專屬繪本！');
     }
 
+    // --- 拍立得相片操作 ---
+    function openPolaroidModal(dayIdx) {
+      playPop();
+      targetDayIndexForPolaroid = dayIdx;
+      tempPolaroidImgData = null;
+      document.getElementById('polaroidFileInput').value = '';
+      document.getElementById('polaroidCaptionInput').value = '';
+      const pBox = document.getElementById('polaroidPreview');
+      pBox.style.display = 'none';
+      pBox.innerHTML = '';
+      document.getElementById('polaroidModal').style.display = 'flex';
+    }
+    function closePolaroidModal() { document.getElementById('polaroidModal').style.display = 'none'; }
+
+    function handlePolaroidSelect(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (evt) => {
+        const img = new Image();
+        img.onload = () => {
+          const maxDim = 800;
+          let w = img.width, h = img.height;
+          if (w > maxDim || h > maxDim) {
+            if (w > h) { h = Math.round((h * maxDim) / w); w = maxDim; }
+            else { w = Math.round((w * maxDim) / h); h = maxDim; }
+          }
+          const c = document.createElement('canvas');
+          c.width = w; c.height = h;
+          const cx = c.getContext('2d');
+          cx.drawImage(img, 0, 0, w, h);
+          tempPolaroidImgData = c.toDataURL('image/jpeg', 0.85);
+
+          const pBox = document.getElementById('polaroidPreview');
+          pBox.style.display = 'block';
+          pBox.innerHTML = `<img src="${tempPolaroidImgData}" style="width:100%; height:100%; object-fit:cover;" />`;
+        };
+        img.src = evt.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    async function savePolaroidPhoto() {
+      if (!tempPolaroidImgData) { alert('請先選擇一張相片！'); return; }
+      playPop();
+      const caption = document.getElementById('polaroidCaptionInput').value.trim() || '留在此刻的美好時光';
+      await savePolaroidToDB(targetDayIndexForPolaroid, tempPolaroidImgData, caption);
+      closePolaroidModal();
+      const cached = localStorage.getItem('saved_trip_text') || MY_TRIP_DATA;
+      renderBook(parseItinerary(cached));
+    }
+
+    async function deletePolaroid(dayIdx) {
+      if (!confirm('確定要撕下這張拍立得照片嗎？')) return;
+      playPop();
+      await deletePolaroidFromDB(dayIdx);
+      const cached = localStorage.getItem('saved_trip_text') || MY_TRIP_DATA;
+      renderBook(parseItinerary(cached));
+    }
+
     // ==========================================
     // 🧠 智慧行程高容錯解析引擎
     // ==========================================
@@ -528,7 +749,7 @@ Day 1｜海風與芒草
 
       const hotelRegex = /(?:住宿|飯店|酒店|民宿|Hotel|Stay|宿)[：:]\s*(.*)/i;
       const flightRegex = /(?:去程|回程|航班|代碼|機票|班機)[：:]?\s*(.*)/i;
-      const timeRegex = /^([0-2]?\d:[0-5]\d(?:\s*[-–~至到]\s*[0-2]?\d:[0-5]\d)?(?:\s*之後)?|[上下]午(?:\s*[0-2]?\d點)?|清晨|早晨|中午|傍晚|晚上|深夜|宵夜|早餐|早午餐|午餐|晚餐)/;
+      const timeRegex = /^([0-2]?\d:[0-5]\d(?:\\s*[-–~至到]\s*[0-2]?\d:[0-5]\d)?(?:\s*之後)?|[上下]午(?:\s*[0-2]?\d點)?|清晨|早晨|中午|傍晚|晚上|深夜|宵夜|早餐|早午餐|午餐|晚餐)/;
       const bulletRegex = /^(\d+[\.,、\)]|[\-\-\•\▪])\s*/;
 
       lines.forEach(line => {
@@ -577,20 +798,23 @@ Day 1｜海風與芒草
       return { flightInfo, days, isKorea };
     }
 
-    function renderBook(data) {
+    async function renderBook(data) {
+      const polaroidsMap = await getAllPolaroidsFromDB();
       const book = document.getElementById('storybook');
       book.innerHTML = '';
       const totalPagesCount = data.days.length + 1;
       const sym = (THEMES[currentThemeKey] || THEMES.orange).symbol;
+      const privacyTitle = PRIVACY_MODES[currentPrivacy].title;
 
       let coverHtml = `
         <div class="page cover-page" style="z-index: ${totalPagesCount};">
           <div>
-            <div style="font-size:0.75rem; font-weight:800; background:rgba(255,255,255,0.25); display:inline-block; padding:4px 12px; border-radius:20px;">FAIRY TALE JOURNAL</div>
+            <div style="font-size:0.75rem; font-weight:800; background:rgba(255,255,255,0.25); display:inline-block; padding:3px 12px; border-radius:20px;">FAIRY TALE JOURNAL</div>
             <div class="cover-illu" onclick="playPop()">${sym}✨</div>
             <h1 class="cover-title">童話漫遊手帳</h1>
+            <div class="privacy-badge" id="coverPrivacyBadge" onclick="openPrivacyModal()">${privacyTitle}</div>
           </div>
-          <div style="display:flex; gap:8px; justify-content:center; margin:8px 0;">
+          <div style="display:flex; gap:8px; justify-content:center; margin:4px 0;">
             <button class="action-btn" style="padding:6px 14px; font-size:0.75rem;" onclick="openPlanModal()">📋 貼上行程</button>
             <button class="action-btn" style="padding:6px 14px; font-size:0.75rem;" onclick="openThemeModal()">🎨 風格換色</button>
           </div>
@@ -633,13 +857,32 @@ Day 1｜海風與芒草
           </div>
         ` : '';
 
+        let polaroidItem = polaroidsMap[index];
+        let polaroidHtml = polaroidItem ? `
+          <div class="polaroid-container">
+            <div class="polaroid-frame">
+              <div class="polaroid-tape"></div>
+              <div class="polaroid-img-box">
+                <img src="${polaroidItem.imgData}" />
+              </div>
+              <div class="polaroid-caption">🖋️ ${polaroidItem.caption}</div>
+              <button class="polaroid-del-btn" onclick="deletePolaroid(${index})" title="撕下照片">🗑️ 移除</button>
+            </div>
+          </div>
+        ` : `
+          <button class="add-polaroid-btn" onclick="openPolaroidModal(${index})">
+            <span>📸 貼上一張今日拍立得相片</span>
+          </button>
+        `;
+
         book.innerHTML += `
           <div class="page" style="z-index: ${z};">
             <div class="page-scroll">
               <div class="chapter-tag">CHAPTER 0${index + 1}</div>
               <h2 class="chapter-header">${day.title}</h2>
               ${hotelHtml}
-              <div class="timeline-stack">${eventsHtml || '<p style="font-size:0.75rem; color:var(--ink-muted); padding:10px 0;">今日無具體景點安排，隨心漫步～</p>'}</div>
+              <div class="timeline-stack">${eventsHtml || '<p style="font-size:0.75rem; color:var(--ink-muted); padding:6px 0;">今日無具體行程，享受放空漫步時光～</p>'}</div>
+              ${polaroidHtml}
             </div>
             <div class="page-tail"><span>Day ${index + 1}</span><span>第 ${index + 1} 頁</span></div>
           </div>
