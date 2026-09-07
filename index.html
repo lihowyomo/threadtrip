@@ -414,3 +414,667 @@
       border-color: #D6C5B8;
       color: #9C8F84;
     }
+
+    /* 2. 社群動態牆 */
+    #communityView {
+      justify-content: flex-start;
+      padding: 10px 16px;
+      overflow-y: auto;
+    }
+
+    .feed-container {
+      width: 100%;
+      max-width: 440px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      padding-bottom: 70px;
+    }
+
+    .feed-card {
+      background: #FFFFFF;
+      border: 2px solid var(--border-color);
+      border-radius: 18px;
+      padding: 14px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .feed-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .feed-user {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--primary-soft);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+    }
+
+    .user-meta {
+      display: flex;
+      flex-direction: column;
+    }
+    .user-name { font-size: 0.85rem; font-weight: 800; color: var(--ink); }
+    .post-time { font-size: 0.68rem; color: var(--ink-muted); }
+
+    .open-book-banner {
+      background: var(--primary-soft);
+      border: 1px dashed var(--primary);
+      border-radius: 12px;
+      padding: 8px 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+    }
+    .open-book-title {
+      font-size: 0.78rem;
+      font-weight: 800;
+      color: var(--primary-deep);
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    /* 發文 FAB */
+    .post-fab {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      width: 54px;
+      height: 54px;
+      border-radius: 50%;
+      box-shadow: 0 6px 18px rgba(232, 91, 7, 0.4);
+      font-size: 1.6rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 20;
+    }
+
+    /* 彈窗樣式 */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.45);
+      z-index: 99;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .modal-sheet {
+      background: var(--paper-bg);
+      width: 100%;
+      max-width: 440px;
+      max-height: 90vh;
+      border-radius: 24px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+      overflow-y: auto;
+    }
+
+    .modal-sheet textarea {
+      width: 100%;
+      min-height: 200px;
+      border-radius: 12px;
+      border: 1.5px solid var(--border-color);
+      padding: 10px;
+      font-size: 0.82rem;
+      outline: none;
+      user-select: text;
+      -webkit-user-select: text;
+      line-height: 1.5;
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .submit-btn {
+      flex: 1;
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      border-radius: 14px;
+      padding: 11px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .close-btn {
+      background: #EFE4D9;
+      color: var(--ink);
+      border: none;
+      border-radius: 14px;
+      padding: 11px 16px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .demo-btn {
+      background: #FFF2E6;
+      border: 1px dashed var(--primary);
+      color: var(--primary-deep);
+      padding: 5px 10px;
+      font-size: 0.72rem;
+      font-weight: 800;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <canvas id="effectCanvas"></canvas>
+
+  <header>
+    <div class="nav-tabs">
+      <button class="nav-tab active" id="tabBook" onclick="switchView('book')">📖 故事繪本</button>
+      <button class="nav-tab" id="tabFeed" onclick="switchView('feed')">📸 旅人動態</button>
+    </div>
+    <div class="action-icons">
+      <button class="icon-btn" onclick="openPlanModal()" title="貼上行程">📝</button>
+    </div>
+  </header>
+
+  <div class="view-container">
+    <!-- 視圖 1: 故事繪本 -->
+    <div class="view-panel active" id="bookView">
+      <div class="storybook-wrapper" id="storyWrapper">
+        <div class="storybook" id="storybook"></div>
+      </div>
+      <div class="book-controls">
+        <button class="action-btn" id="prevBtn" onclick="prevPage()" disabled>‹ 上一頁</button>
+        <button class="action-btn" id="nextBtn" onclick="nextPage()">下一頁 ›</button>
+      </div>
+    </div>
+
+    <!-- 視圖 2: 社群動態牆 -->
+    <div class="view-panel" id="communityView">
+      <div class="feed-container" id="feedContainer"></div>
+    </div>
+  </div>
+
+  <button class="post-fab" id="postFab" style="display:none;" onclick="alert('請切換至動態牆發布短影片或美照！')">＋</button>
+
+  <!-- 智慧行程貼上彈窗 -->
+  <div class="modal-overlay" id="planModal">
+    <div class="modal-sheet">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+        <h3 style="font-size:1.05rem; color:var(--primary-deep);">📋 直接貼上您的行程文字</h3>
+        <button class="demo-btn" onclick="loadSampleText()">載入範例</button>
+      </div>
+      <p style="font-size:0.72rem; color:var(--ink-muted); margin-bottom:10px;">
+        💡 支援任意格式：無論來自 LINE、Notion 或是記事本，即使沒有標註時間，系統也會自動排版為繪本章節！
+      </p>
+      <textarea id="rawTextInput" placeholder="直接在此貼上行程內容...
+範例：
+Day 1｜抵達濟州
+住宿：濟州神話世界
+10:00 彩虹海岸道路：拍照散步
+12:00 涯月咖啡街：看海喝咖啡
+15:00 9.81 重力賽車"></textarea>
+
+      <div class="modal-actions">
+        <button class="close-btn" onclick="closePlanModal()">取消</button>
+        <button class="submit-btn" onclick="applyPlanText()">✨ 生成繪本手帳</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let currentPage = 0;
+    let pages = [];
+    let totalPages = 0;
+    let audioCtx = null;
+    let currentParsedData = null;
+
+    // 預設示範行程
+    const DEFAULT_TRIP = `✈️ 航班與住宿資訊
+去程：2026/09/12 虎航 IT632 07:00 台北 ➔ 10:00 濟州
+回程：2026/09/16 虎航 IT655 10:30 濟州 ➔ 11:35 台北
+
+9/12（六）Day 1｜彩虹道路 ➔ 涯月拍貼 ➔ 981重力賽車
+住宿：濟州神話世界
+10:00–11:00｜抵達與取車：降落機場出關，搭接駁車取車。
+11:00–11:30｜道頭洞彩虹海岸道路：彩色石墩拍照散步。
+11:30–12:30｜Haru Film 涯月店：粉藍海景拍貼機、吃冰淇淋。
+14:15–16:15｜9.81 Park 重力賽車：重力競速與科技遊樂設施。
+16:45–19:30｜神話度假村：Check-in 放行李、享受水上設施。
+21:30 之後｜宵夜：BHC 炸雞配生啤酒。
+
+9/13（日）Day 2｜西歸浦自然奇景 ➔ 親子休閒 ➔ 綠茶館
+住宿：濟州神話世界
+10:00–12:00｜Arte Kids Park：西南部大型互動科技樂園。
+12:30–14:00｜午餐：濟州炭烤活鰻魚料理。
+14:00–16:30｜柱狀節理帶：大自然的鬼斧神工火山岩壁。
+16:30–18:30｜雪綠茶博物館：Innisfree 綠茶冰淇淋。
+21:30 之後｜宵夜：韓式炸醬麵＋酥脆糖醋肉。
+
+9/14（一）Day 3｜換飯店 ➔ 鮑魚粥 ➔ 藍瓶咖啡 ➔ 東部海景
+住宿：Hotel RegentMarine The Blue
+10:30–11:45｜早午餐：濟州濃郁海女鮑魚粥。
+12:00–13:00｜藍瓶咖啡：手沖咖啡與濟州限定特調打卡。
+13:30–15:15｜月汀里海灘：果凍海漫步、海邊放空。
+18:00–20:30｜東門市場：夜市小吃、橘子糖葫蘆與伴手禮。`;
+
+    function initAudio() {
+      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+    }
+
+    function playPop() {
+      try {
+        initAudio();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.frequency.setValueAtTime(520, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(980, audioCtx.currentTime + 0.08);
+        gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.08);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.08);
+      } catch(e){}
+    }
+
+    function playFlip() {
+      try {
+        initAudio();
+        const buf = audioCtx.createBuffer(1, audioCtx.sampleRate * 0.1, audioCtx.sampleRate);
+        const data = buf.getChannelData(0);
+        for (let i = 0; i < data.length; i++) data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (data.length * 0.3));
+        const src = audioCtx.createBufferSource();
+        src.buffer = buf;
+        const filter = audioCtx.createBiquadFilter();
+        filter.frequency.setValueAtTime(750, audioCtx.currentTime);
+        src.connect(filter);
+        filter.connect(audioCtx.destination);
+        src.start();
+      } catch(e){}
+    }
+
+    // 視圖切換
+    function switchView(view) {
+      document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.view-panel').forEach(p => p.classList.remove('active'));
+
+      if (view === 'book') {
+        document.getElementById('tabBook').classList.add('active');
+        document.getElementById('bookView').classList.add('active');
+      } else {
+        document.getElementById('tabFeed').classList.add('active');
+        document.getElementById('communityView').classList.add('active');
+        loadSampleFeed();
+      }
+    }
+
+    // ==========================================
+    // 🧠 核心升級：超高容錯「智慧行程解析引擎」
+    // ==========================================
+    function parseItinerary(rawText) {
+      if (!rawText || !rawText.trim()) {
+        return { title: "我的旅行手帳", memo: "", days: [], totalSpots: 0, isKorea: false };
+      }
+
+      const lines = rawText.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+      
+      // 自動辨識目的地：若包含韓國常見關鍵字，預設優先提供 Naver Map
+      const isKorea = /濟州|首爾|釜山|弘大|明洞|東大門|西歸浦|南怡島|大邱|韓國|korea|jeju|seoul|busan/i.test(rawText);
+
+      let memo = "";
+      const days = [];
+      let currentDay = null;
+      let totalSpots = 0;
+
+      // 天數正則：支援 Day 1, D1, 第一天, 9/12, 9月12日, 2026/09/12 等
+      const dayHeaderRegex = /^(?:#+\s*)?(?:【?\s*(?:Day\s*\d+|D\d+|第\s*[一二三四五六七八九十\d]+\s*天|\d{1,2}\s*[\/\.-]\s*\d{1,2}(?:\s*[（(][^）)]+[）)])?|\d{4}[\/\.-]\d{1,2}[\/\.-]\d{1,2})\s*】?)(.*)$/i;
+      
+      // 住宿正則
+      const hotelRegex = /(?:住宿|飯店|酒店|民宿|Hotel|Stay|宿)[：:]\s*(.*)/i;
+      
+      // 交通/備忘正則
+      const memoRegex = /(?:去程|回程|航班|機票|搭乘|班機|代碼|備忘|注意事項|高鐵|台鐵)[：:]?\s*(.*)/i;
+
+      // 時間前綴正則：支援 10:00-11:00, 10:00~11:00, 10:00, 10:00之後, 上午, 下午, 晚上, 早午餐等
+      const timeRegex = /^([0-2]?\d:[0-5]\d(?:\s*[-–~至到]\s*[0-2]?\d:[0-5]\d)?(?:\s*之後)?|[上下]午(?:\s*[0-2]?\d點)?|清晨|早晨|中午|傍晚|晚上|深夜|宵夜|早餐|早午餐|午餐|晚餐)/;
+
+      // 清單符號正則：1. / 1、 / (1) / - / • / *
+      const bulletRegex = /^(\d+[\.、\)]|[\-\*\•\▪])\s*/;
+
+      lines.forEach((line) => {
+        // 1. 偵測住宿
+        if (hotelRegex.test(line)) {
+          const matchedHotel = line.match(hotelRegex)[1].trim();
+          if (currentDay) {
+            currentDay.hotel = matchedHotel;
+          } else {
+            memo += `🏡 住宿：${matchedHotel}<br/>`;
+          }
+          return;
+        }
+
+        // 2. 偵測航班或重要備忘
+        if (memoRegex.test(line) && !currentDay) {
+          memo += line + "<br/>";
+          return;
+        }
+
+        // 3. 偵測新的一天（章節）
+        if (dayHeaderRegex.test(line) && !line.includes('住宿') && !timeRegex.test(line)) {
+          if (currentDay) days.push(currentDay);
+          currentDay = {
+            title: line.replace(/^#+\s*/, '').trim(),
+            hotel: '',
+            events: []
+          };
+          return;
+        }
+
+        // 4. 行程項目解析（容錯：有時間、無時間、純編號列表皆相容）
+        if (!currentDay) {
+          // 如果還沒遇到 Day 標籤就出現行程，自動補上 Day 1
+          currentDay = { title: "Day 1｜旅程啟程", hotel: '', events: [] };
+        }
+
+        let timeStr = "隨意";
+        let restOfLine = line;
+
+        // 嘗試提取時間
+        const timeMatch = restOfLine.match(timeRegex);
+        if (timeMatch) {
+          timeStr = timeMatch[0];
+          restOfLine = restOfLine.substring(timeStr.length).replace(/^[｜|:\s\-–~]+/, '');
+        } else {
+          // 嘗試去除列表符號如 "1. " 或 "- "
+          const bulletMatch = restOfLine.match(bulletRegex);
+          if (bulletMatch) {
+            timeStr = "行程";
+            restOfLine = restOfLine.substring(bulletMatch[0].length).trim();
+          }
+        }
+
+        // 分割標題與細節說明（用冒號或破折號）
+        let title = restOfLine;
+        let desc = "";
+        if (restOfLine.includes('：') || restOfLine.includes(':')) {
+          const splitArr = restOfLine.split(/[：:]/);
+          title = splitArr[0].trim();
+          desc = splitArr.slice(1).join(':').trim();
+        } else if (restOfLine.includes('——') || restOfLine.includes(' - ')) {
+          const splitArr = restOfLine.split(/——|\s-\s/);
+          title = splitArr[0].trim();
+          desc = splitArr.slice(1).join(' ').trim();
+        }
+
+        if (title) {
+          currentDay.events.push({ time: timeStr, title, desc });
+          totalSpots++;
+        }
+      });
+
+      if (currentDay) days.push(currentDay);
+
+      return {
+        title: days.length > 0 ? (days[0].title.split(/[｜|]/)[1] || "精采自由行") : "我的旅行手帳",
+        memo,
+        days,
+        totalSpots,
+        isKorea
+      };
+    }
+
+    // ==========================================
+    // 📖 繪本渲染引擎
+    // ==========================================
+    function renderBook(data) {
+      currentParsedData = data;
+      const book = document.getElementById('storybook');
+      book.innerHTML = '';
+
+      const totalPagesCount = data.days.length + 1;
+
+      // 1. 封面 Page
+      const coverHtml = `
+        <div class="page cover-page" style="z-index: ${totalPagesCount};">
+          <div>
+            <div style="font-size:0.72rem; font-weight:800; background:rgba(255,255,255,0.25); display:inline-block; padding:3px 10px; border-radius:20px;">TRAVEL STORYBOOK</div>
+            <div class="cover-illu" onclick="playPop()">🍊✨</div>
+            <h1 class="cover-title">童話漫遊手帳</h1>
+            <div class="trip-summary-badge">
+              <span>🗓️ 共 ${data.days.length} 天</span>
+              <span>•</span>
+              <span>📍 ${data.totalSpots} 個景點</span>
+            </div>
+          </div>
+
+          <button class="quick-paste-btn" onclick="openPlanModal()">
+            <span>📋 貼上/修改我的行程</span>
+          </button>
+
+          <div class="cover-card">
+            <strong style="color:var(--primary-deep);">✈️ 出行備忘與資訊</strong><br/>
+            ${data.memo || '點擊上方按鈕直接貼上您的旅行記事～'}
+          </div>
+          <p style="font-size:0.7rem; opacity:0.85;">（向左滑動翻頁，點擊行程可蓋章完成）</p>
+        </div>
+      `;
+      book.innerHTML += coverHtml;
+
+      // 2. 每天對應的繪本頁
+      data.days.forEach((day, index) => {
+        const z = totalPagesCount - (index + 1);
+
+        const eventsHtml = day.events.map(ev => {
+          // 提供 Naver 與 Google 地圖連結
+          const naverUrl = `https://map.naver.com/v5/search/${encodeURIComponent(ev.title)}`;
+          const googleUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(ev.title)}`;
+
+          return `
+            <div class="story-card" onclick="this.classList.toggle('completed'); playPop();">
+              <div class="card-top">
+                <span class="badge-time">${ev.time}</span>
+                <span class="card-headline">${ev.title}</span>
+                <div class="map-tag-group">
+                  ${data.isKorea ? `<a class="map-btn naver" href="${naverUrl}" target="_blank" onclick="event.stopPropagation()">🧭 Naver</a>` : ''}
+                  <a class="map-btn google" href="${googleUrl}" target="_blank" onclick="event.stopPropagation()">🗺️ Google</a>
+                </div>
+              </div>
+              ${ev.desc ? `<div class="card-text">${ev.desc}</div>` : ''}
+            </div>
+          `;
+        }).join('');
+
+        let hotelHtml = '';
+        if (day.hotel) {
+          const hotelNaver = `https://map.naver.com/v5/search/${encodeURIComponent(day.hotel)}`;
+          const hotelGoogle = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(day.hotel)}`;
+          hotelHtml = `
+            <div class="hotel-banner">
+              <span>🏡 住宿：${day.hotel}</span>
+              <div class="map-tag-group">
+                ${data.isKorea ? `<a class="map-btn naver" href="${hotelNaver}" target="_blank" onclick="event.stopPropagation()">🧭 Naver</a>` : ''}
+                <a class="map-btn google" href="${hotelGoogle}" target="_blank" onclick="event.stopPropagation()">🗺️ Google</a>
+              </div>
+            </div>
+          `;
+        }
+
+        const pageHtml = `
+          <div class="page" style="z-index: ${z};">
+            <div class="page-scroll">
+              <div class="chapter-tag">CHAPTER 0${index + 1}</div>
+              <h2 class="chapter-header">${day.title}</h2>
+              ${hotelHtml}
+              <div class="timeline-stack">
+                ${eventsHtml || '<p style="font-size:0.75rem; color:var(--ink-muted);">今日暫無具體景點安排，隨心漫步～</p>'}
+              </div>
+            </div>
+            <div class="page-tail">
+              <span>Day ${index + 1}</span>
+              <span>第 ${index + 1} / ${data.days.length} 頁</span>
+            </div>
+          </div>
+        `;
+        book.innerHTML += pageHtml;
+      });
+
+      currentPage = 0;
+      pages = document.querySelectorAll('.page');
+      totalPages = pages.length;
+      updateControls();
+    }
+
+    function updateControls() {
+      document.getElementById('prevBtn').disabled = (currentPage === 0);
+      document.getElementById('nextBtn').disabled = (currentPage >= totalPages - 1);
+    }
+
+    function nextPage() {
+      if (currentPage < totalPages - 1) {
+        playFlip();
+        pages[currentPage].classList.add('flipped');
+        currentPage++;
+        updateControls();
+      }
+    }
+
+    function prevPage() {
+      if (currentPage > 0) {
+        playFlip();
+        currentPage--;
+        pages[currentPage].classList.remove('flipped');
+        updateControls();
+      }
+    }
+
+    // 滑動翻頁
+    let startX = 0;
+    const wrapper = document.getElementById('storyWrapper');
+    wrapper.addEventListener('touchstart', e => { startX = e.touches[0].clientX; }, { passive: true });
+    wrapper.addEventListener('touchend', e => {
+      const diff = e.changedTouches[0].clientX - startX;
+      if (Math.abs(diff) > 45) {
+        if (diff < 0) nextPage();
+        else prevPage();
+      }
+    }, { passive: true });
+
+    // 彈窗控制
+    function openPlanModal() { document.getElementById('planModal').style.display = 'flex'; }
+    function closePlanModal() { document.getElementById('planModal').style.display = 'none'; }
+
+    function loadSampleText() {
+      document.getElementById('rawTextInput').value = DEFAULT_TRIP;
+    }
+
+    function applyPlanText() {
+      const text = document.getElementById('rawTextInput').value.trim();
+      if (!text) {
+        alert('請先貼入行程文字內容喔！');
+        return;
+      }
+      playPop();
+      localStorage.setItem('my_saved_trip', text);
+      const parsed = parseItinerary(text);
+      renderBook(parsed);
+      closePlanModal();
+    }
+
+    // 示範社群動態
+    function loadSampleFeed() {
+      const container = document.getElementById('feedContainer');
+      container.innerHTML = `
+        <div class="feed-card">
+          <div class="feed-header">
+            <div class="feed-user">
+              <div class="avatar">🌊</div>
+              <div class="user-meta">
+                <span class="user-name">月汀里漫步者</span>
+                <span class="post-time">2 小時前</span>
+              </div>
+            </div>
+          </div>
+          <div style="font-size:0.86rem; line-height:1.45;">月汀里的海水就像透明果凍！坐在沙灘旁喝藍瓶咖啡超療癒～</div>
+          <div class="open-book-banner" onclick="switchView('book')">
+            <div class="open-book-title">
+              <span>📖 翻開作者的濟州東部繪本</span>
+            </div>
+            <div style="font-size:0.75rem; color:var(--primary-deep); font-weight:800;">查閱行程 ›</div>
+          </div>
+        </div>
+      `;
+    }
+
+    // 背景漂浮橘子 Canvas
+    const canvas = document.getElementById('effectCanvas');
+    const ctx = canvas.getContext('2d');
+    let w, h;
+    function resize() { w = canvas.width = window.innerWidth; h = canvas.height = window.innerHeight; }
+    window.addEventListener('resize', resize);
+    resize();
+
+    const particles = Array.from({ length: 14 }, () => ({
+      x: Math.random() * w,
+      y: Math.random() * h,
+      size: 14 + Math.random() * 12,
+      spY: 0.5 + Math.random() * 0.7,
+      rot: Math.random() * 6.28
+    }));
+
+    function anim() {
+      ctx.clearRect(0, 0, w, h);
+      particles.forEach(p => {
+        p.y += p.spY;
+        p.rot += 0.01;
+        if (p.y > h + 30) p.y = -20;
+        ctx.save();
+        ctx.translate(p.x, p.y);
+        ctx.rotate(p.rot);
+        ctx.font = `${p.size}px sans-serif`;
+        ctx.textAlign = 'center';
+        ctx.fillText('🍊', 0, 0);
+        ctx.restore();
+      });
+      requestAnimationFrame(anim);
+    }
+    anim();
+
+    // 初始化載入
+    window.addEventListener('DOMContentLoaded', () => {
+      const saved = localStorage.getItem('my_saved_trip') || DEFAULT_TRIP;
+      document.getElementById('rawTextInput').value = saved;
+      renderBook(parseItinerary(saved));
+    });
+  </script>
+</body>
+</html>
